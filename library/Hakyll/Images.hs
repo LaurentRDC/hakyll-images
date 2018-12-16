@@ -1,7 +1,7 @@
 
 {-|
 Module      : Hakyll.Images
-Description : Hakyll utilities for image file types
+Description : Hakyll utilities for image files
 Copyright   : (c) Laurent P René de Cotret, 2018
 License     : MIT
 Maintainer  : laurent.decotret@outlook.com
@@ -13,12 +13,6 @@ module Hakyll.Images (
       JpgQuality
     , compressJpg
     , compressJpgCompiler
-    -- general image resizing
-    -- , Width
-    -- , Height
-    -- , scaleImage
-    -- , scaleImageToFit
 ) where
 
 import Hakyll.Images.CompressJpg (compressJpg, compressJpgCompiler, JpgQuality)
--- import Hakyll.Images.Resize      (scaleImage, scaleImageToFit, Width, Height)
