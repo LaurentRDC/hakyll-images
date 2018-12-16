@@ -4,17 +4,19 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2d8311f19c7b829db113e1792ab9e366a8554ab64cafa9f6d275e4635c73d4b9
+-- hash: 6872e780db2f51ff9fc12ebc08c9e0c28437101be606866e2e6084672f88cba7
 
 name:           hakyll-images
 version:        0.0.1
-synopsis:       Hakyll utilities to work with images, including JPEG compression and image re-sizing.
+synopsis:       Hakyll utilities to work with images
+description:    hakyll-images is an add-on to the hakyll package. It adds utilities to work with images, including JPEG compression.
 category:       Web
 homepage:       https://github.com/LaurentRDC/hakyll-images#readme
 bug-reports:    https://github.com/LaurentRDC/hakyll-images/issues
 author:         Laurent P. René de Cotret
 maintainer:     Laurent P. René de Cotret
 license:        BSD3
+license-file:   LICENSE.md
 build-type:     Simple
 extra-source-files:
     CHANGELOG.md
@@ -37,7 +39,7 @@ library
       Paths_hakyll_images
   hs-source-dirs:
       library
-  ghc-options: -Wall -Wcompat -Wunused-imports
+  ghc-options: -Wall -Wcompat
   build-depends:
       JuicyPixels >3 && <4
     , JuicyPixels-extra >0.3
@@ -58,7 +60,7 @@ test-suite spec
   hs-source-dirs:
       tests
       library
-  ghc-options: -Wall -Wcompat -Wunused-imports
+  ghc-options: -Wall -Wcompat
   build-depends:
       JuicyPixels >3 && <4
     , JuicyPixels-extra >0.3

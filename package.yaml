@@ -4,9 +4,12 @@ github: "LaurentRDC/hakyll-images"
 license: BSD3
 author: "Laurent P. René de Cotret"
 maintainer: "Laurent P. René de Cotret"
-synopsis: "Hakyll utilities to work with images, including JPEG compression and image re-sizing."
-# description: hakyll-images is a new Haskeleton package.
+synopsis: "Hakyll utilities to work with images"
+description: 
+  hakyll-images is an add-on to the hakyll package. It adds utilities to work
+  with images, including JPEG compression. 
 category: Web
+license-file: LICENSE.md
 
 extra-source-files:
 - CHANGELOG.md

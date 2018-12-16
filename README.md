@@ -23,10 +23,10 @@ hakyll $ do
 
     (... omitted ...)
 
-    -- Compress all source Jpegs to a Jpeg quality of 50
-    match "files/*.jpg" $ do
+    -- Compress all source Jpegs to a Jpeg quality of 50 (maximum of 100)
+    match "images/**.jpg" $ do
             route idRoute
-            compilte (compressJpgCompiler) 50
+            compile (compressJpgCompiler 50)
 
     (... omitted ...)
 ```
