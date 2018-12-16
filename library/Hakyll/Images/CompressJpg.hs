@@ -24,9 +24,9 @@ The @compressJpgCompiler@ is expected to be used like this:
 
         (... omitted ...)
         -- Compress all source Jpegs to a Jpeg quality of 50
-        match "files/*.jpg" $ do
+        match "images/**.jpg" $ do
             route idRoute
-            compilte (compressJpgCompiler) 50
+            compile (compressJpgCompiler 50)
         
         (... omitted ...)
 @
