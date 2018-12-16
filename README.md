@@ -37,5 +37,5 @@ Take a look at the [documentation](hackage.haskell.org/package/hakyll-images) fo
 
 ```bash
 cabal update
-cabal install pandoc-pyplot
+cabal install hakyll-images
 ```
