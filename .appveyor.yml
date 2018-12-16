@@ -33,13 +33,14 @@ environment:
     TMP: "c:\\tmp"
 
   matrix:
-  - ARGS: ""
   - ARGS: "--resolver lts-12"
 
 matrix:
   fast_finish: true
 
 test_script:
+
+- stack --version
 
 # Install toolchain, but do it silently due to lots of output
 - stack %ARGS% setup > nul
