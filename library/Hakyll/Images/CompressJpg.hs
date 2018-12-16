@@ -53,11 +53,14 @@ type JpgQuality = Int
 
 -- | Compress a JPG bytestring to a certain quality setting.
 -- The quality should be between 0 (lowest quality) and 100 (best quality).
--- An error is raised if the image cannot be decoded.
+-- An error is raised if the image cannot be decoded, or if the 
+-- encoding quality is out-of-bounds
 compressJpg :: JpgQuality -> ByteString -> ByteString
 compressJpg quality src = case im of
-        Right dynImage -> imageToJpg quality dynImage
         Left _         -> error $ "Loading the image failed."
+        Right dynImage -> if (quality < 0 || quality > 100)
+            then error $ "JPEG encoding quality should be between 0 and 100"
+            else imageToJpg quality dynImage
     -- The function `decodeJpeg` requires strict ByteString
     -- However, `imageToJpg` requires Lazy Bytestrings
     where im = (decodeJpeg . toStrict) src
