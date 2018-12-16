@@ -35,7 +35,6 @@ environment:
   matrix:
   - ARGS: ""
   - ARGS: "--resolver lts-12"
-  - ARGS: "--resolver nightly"
 
 matrix:
   fast_finish: true
