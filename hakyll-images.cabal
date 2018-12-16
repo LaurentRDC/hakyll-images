@@ -1,0 +1,72 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.30.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 2d8311f19c7b829db113e1792ab9e366a8554ab64cafa9f6d275e4635c73d4b9
+
+name:           hakyll-images
+version:        0.0.1
+synopsis:       Hakyll utilities to work with images, including JPEG compression and image re-sizing.
+category:       Web
+homepage:       https://github.com/LaurentRDC/hakyll-images#readme
+bug-reports:    https://github.com/LaurentRDC/hakyll-images/issues
+author:         Laurent P. René de Cotret
+maintainer:     Laurent P. René de Cotret
+license:        BSD3
+build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+    LICENSE.md
+    package.yaml
+    README.md
+    stack.yaml
+data-files:
+    tests/data/piccolo.jpg
+
+source-repository head
+  type: git
+  location: https://github.com/LaurentRDC/hakyll-images
+
+library
+  exposed-modules:
+      Hakyll.Images.CompressJpg
+  other-modules:
+      Hakyll.Images
+      Paths_hakyll_images
+  hs-source-dirs:
+      library
+  ghc-options: -Wall -Wcompat -Wunused-imports
+  build-depends:
+      JuicyPixels >3 && <4
+    , JuicyPixels-extra >0.3
+    , base >=4.8 && <5
+    , bytestring >=0.9 && <0.11
+    , filepath >=1.0 && <1.5
+    , hakyll >4
+  default-language: Haskell2010
+
+test-suite spec
+  type: exitcode-stdio-1.0
+  main-is: TestSuite.hs
+  other-modules:
+      Hakyll.Images.CompressJpg.Tests
+      Hakyll.Images
+      Hakyll.Images.CompressJpg
+      Paths_hakyll_images
+  hs-source-dirs:
+      tests
+      library
+  ghc-options: -Wall -Wcompat -Wunused-imports
+  build-depends:
+      JuicyPixels >3 && <4
+    , JuicyPixels-extra >0.3
+    , base >=4.8 && <5
+    , bytestring >=0.9 && <0.11
+    , filepath >=1.0 && <1.5
+    , hakyll >4
+    , hakyll-images
+    , tasty >=0.11 && <1.2
+    , tasty-hunit >=0.9 && <0.11
+  default-language: Haskell2010
