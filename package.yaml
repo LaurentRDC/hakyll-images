@@ -27,10 +27,8 @@ library:
   dependencies:
   - base              >= 4.8 && < 5
   - bytestring        >= 0.9 && < 0.11
-  - filepath          >= 1.0 && < 1.5
   - hakyll            > 4
   - JuicyPixels       > 3 && < 4
-  - JuicyPixels-extra > 0.3
   source-dirs: library
   exposed-modules:
   - Hakyll.Images.CompressJpg
@@ -48,7 +46,5 @@ tests:
     # Base hakyll-images dependencies
     - base              >= 4.8 && < 5
     - bytestring        >= 0.9 && < 0.11
-    - filepath          >= 1.0 && < 1.5
     - hakyll            > 4
     - JuicyPixels       > 3 && < 4
-    - JuicyPixels-extra > 0.3
