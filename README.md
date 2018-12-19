@@ -41,6 +41,8 @@ Here are the upcoming features of `hakyll-images`:
 
 - [ ] Scale to fit within bounds
 
+- [ ] Format conversion
+
 If you would like a feature added, consider creating [an issue on Github](https://github.com/LaurentRDC/hakyll-images/issues/)
 
 ## Installation
