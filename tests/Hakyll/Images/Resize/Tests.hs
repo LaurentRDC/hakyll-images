@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
-module Hakyll.Images.Rescale.Tests
+module Hakyll.Images.Resize.Tests
     ( tests
     ) where
 
@@ -11,7 +11,7 @@ import           Test.HUnit.Approx      (assertApproxEqual)
 
 
 --------------------------------------------------------------------------------
-import           Hakyll.Images.Rescale
+import           Hakyll.Images.Resize
 import qualified Data.ByteString        as B
 import           Data.Ratio             ((%))
 
@@ -71,7 +71,7 @@ testScalePreservesAspectRatio = do
 
 --------------------------------------------------------------------------------
 tests :: TestTree
-tests = testGroup "Hakyll.Web.Rescale.Tests" $ concat
+tests = testGroup "Hakyll.Web.Resize.Tests" $ concat
    [ fromAssertions "rescale" 
         [ testResize 
         , testScale

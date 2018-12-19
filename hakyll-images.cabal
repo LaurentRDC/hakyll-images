@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1a3f918b37268925dcef189f52866bdca967b8652b4edfd59c2f9b2056a26076
+-- hash: 947315fcd96241760b35b112def30618422d1da5a3b0024b6d183d8d0075da1d
 
 name:           hakyll-images
 version:        0.1.0
@@ -35,7 +35,7 @@ library
   exposed-modules:
       Hakyll.Images
       Hakyll.Images.CompressJpg
-      Hakyll.Images.Rescale
+      Hakyll.Images.Resize
   other-modules:
       Paths_hakyll_images
   hs-source-dirs:
@@ -54,10 +54,10 @@ test-suite spec
   main-is: TestSuite.hs
   other-modules:
       Hakyll.Images.CompressJpg.Tests
-      Hakyll.Images.Rescale.Tests
+      Hakyll.Images.Resize.Tests
       Hakyll.Images
       Hakyll.Images.CompressJpg
-      Hakyll.Images.Rescale
+      Hakyll.Images.Resize
       Paths_hakyll_images
   hs-source-dirs:
       tests

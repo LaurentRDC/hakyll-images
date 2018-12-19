@@ -34,7 +34,7 @@ library:
   exposed-modules:
   - Hakyll.Images
   - Hakyll.Images.CompressJpg
-  - Hakyll.Images.Rescale
+  - Hakyll.Images.Resize
 
 tests:
   spec:

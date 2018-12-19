@@ -1,7 +1,7 @@
 
 {-|
-Module      : Hakyll.Images.Rescale
-Description : Hakyll compiler to rescale images
+Module      : Hakyll.Images.Resize
+Description : Hakyll compiler to resize images
 Copyright   : (c) Laurent P René de Cotret, 2018
 License     : BSD3
 Maintainer  : laurent.decotret@outlook.com
@@ -36,7 +36,7 @@ box while preserving aspect ratio.
         (... omitted ...)
 @
 -}
-module Hakyll.Images.Rescale
+module Hakyll.Images.Resize
     ( Width, Height
     , resize
     , resizeImageCompiler

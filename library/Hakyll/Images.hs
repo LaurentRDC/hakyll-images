@@ -20,4 +20,4 @@ module Hakyll.Images (
 ) where
 
 import Hakyll.Images.CompressJpg
-import Hakyll.Images.Rescale
+import Hakyll.Images.Resize
