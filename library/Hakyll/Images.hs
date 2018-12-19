@@ -16,7 +16,9 @@ module Hakyll.Images (
     -- Image scaling
     , Width, Height
     , resize
+    , resizeImageCompiler
     , scale
+    , scaleImageCompiler
 ) where
 
 import Hakyll.Images.CompressJpg
