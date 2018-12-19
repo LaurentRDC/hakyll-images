@@ -1,21 +1,24 @@
 # hakyll-images
 
-[![Hackage version](https://img.shields.io/hackage/v/hakyll-images.svg)](http://hackage.haskell.org/package/hakyll-images)[![Build status] (https://ci.appveyor.com/api/projects/status/kf12xsgrx1l26b3y?svg=true)](https://ci.appveyor.com/project/LaurentRDC/hakyll-images)
+[![Hackage version](https://img.shields.io/hackage/v/hakyll-images.svg)](http://hackage.haskell.org/package/hakyll-images)[![Build status](https://ci.appveyor.com/api/projects/status/kf12xsgrx1l26b3y?svg=true)](https://ci.appveyor.com/project/LaurentRDC/hakyll-images)
 
 ## A Haskell package containing utilities to deal with images in the context of Hakyll
 
 [Hakyll](https://hackage.haskell.org/package/hakyll) is a static website compiler library. As one of the benefits of static websites is their small size, this repository aims at providing utilities to work with images in the context of Hakyll. Example usage includes:
 
 * Re-encoding Jpeg images at a lower quality to make them much smaller;
-* Re-sizing images to fit within a certain shape (work in-progress)
+* Re-sizing images to fit within a certain shape;
 
 ## Usage
 
-`hakyll-images` is meant to be integrated within a Hakyll program. For example, to compress all Jpeg images present in your source:
+`hakyll-images` is meant to be integrated within a Hakyll program. Here are some examples within a Hakyll program:
 
 ```haskell
 import Hakyll
-import Hakyll.Images        (compressJpgCompiler)
+import Hakyll.Images        ( compressJpgCompiler
+                            , resizeImageCompiler
+                            , scaleImageCompiler
+                            )
 
 (... omitted ...)
 
@@ -28,20 +31,20 @@ hakyll $ do
             route idRoute
             compile (compressJpgCompiler 50)
 
+    -- Resize all profile pictures to 64x48
+    match "profiles/**.jpg" $ do
+        route idRoute
+        compile (resizeImageCompiler 64 48)
+    
+    -- Scale images to fit within a 600x400 box
+    match "images/**.png" $ do
+        route idRoute
+        compile (scaleImageCompiler 600 400)
+
     (... omitted ...)
 ```
 
 Take a look at the [documentation](hackage.haskell.org/package/hakyll-images) for more usage examples.
-
-## Upcoming features
-
-Here are the upcoming features of `hakyll-images`:
-
-- [ ] Resize images to size
-
-- [ ] Scale to fit within bounds
-
-- [ ] Format conversion
 
 If you would like a feature added, consider creating [an issue on Github](https://github.com/LaurentRDC/hakyll-images/issues/)
 
@@ -69,6 +72,12 @@ stack install # Alternatively, `cabal install`
 ## Documentation
 
 The documentation for the latest release is available on the [Hackage page](http://hackage.haskell.org/package/hakyll-images/). 
+
+## Upcoming features
+
+Here are the upcoming features of `hakyll-images`:
+
+- [ ] Format conversion
 
 ## Support  Issues / Feature requests
 
