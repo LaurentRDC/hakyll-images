@@ -46,14 +46,14 @@ module Hakyll.Images.Resize
 
 import Codec.Picture            (convertRGBA8, decodeImage)
 import Codec.Picture.Types
-import Codec.Picture.Saving    
+import Codec.Picture.Saving
 import Codec.Picture.Extra      (scaleBilinear)
 
 import Data.ByteString.Lazy     (ByteString, toStrict)
 import Data.Ratio               ((%))
 
-import Hakyll.Core.Item
-import Hakyll.Core.Compiler
+import Hakyll.Core.Item         (Item(..), itemBody)
+import Hakyll.Core.Compiler     (Compiler, getResourceLBS, getUnderlyingExtension)
 
 type Width = Int
 type Height = Int

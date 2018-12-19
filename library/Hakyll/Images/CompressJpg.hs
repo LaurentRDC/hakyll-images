@@ -39,7 +39,6 @@ module Hakyll.Images.CompressJpg
 
 import Data.ByteString.Lazy             (ByteString, toStrict)
 
--- From JuicyPixels
 import Codec.Picture.Jpg                (decodeJpeg)
 import Codec.Picture.Saving             (imageToJpg)
 

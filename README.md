@@ -1,6 +1,6 @@
 # hakyll-images
 
-[![Hackage version](https://img.shields.io/hackage/v/hakyll-images.svg)](http://hackage.haskell.org/package/hakyll-images)[![Build status](https://ci.appveyor.com/api/projects/status/kf12xsgrx1l26b3y?svg=true)](https://ci.appveyor.com/project/LaurentRDC/hakyll-images)
+[![Hackage version](https://img.shields.io/hackage/v/hakyll-images.svg)](http://hackage.haskell.org/package/hakyll-images) [![Build status](https://ci.appveyor.com/api/projects/status/kf12xsgrx1l26b3y?svg=true)](https://ci.appveyor.com/project/LaurentRDC/hakyll-images)
 
 ## A Haskell package containing utilities to deal with images in the context of Hakyll
 
