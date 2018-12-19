@@ -1,7 +1,12 @@
 # Change log
 
-hakyll-images uses [Semantic Versioning][].
-The change log is available through the [releases on GitHub][].
+Release 0.1.0 (Work-in-progress)
+--------------------------------
 
-[Semantic Versioning]: http://semver.org/spec/v2.0.0.html
-[releases on GitHub]: https://github.com/githubuser/hakyll-images/releases
+* added resizeImageCompiler to resize images to a specific shape;
+* added scaleImageCompiler to scale images while keeping aspect ratio.
+
+Release 0.0.1
+-------------
+
+* Added compressJpgCompiler to compress JPEGs.
