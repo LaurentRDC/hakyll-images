@@ -20,28 +20,28 @@ import Hakyll.Images        ( compressJpgCompiler
                             , scaleImageCompiler
                             )
 
-(... omitted ...)
+(...)
 
 hakyll $ do
 
-    (... omitted ...)
-
     -- Compress all source Jpegs to a Jpeg quality of 50 (maximum of 100)
     match "images/**.jpg" $ do
-            route idRoute
-            compile (compressJpgCompiler 50)
+        route idRoute
+        compile (compressJpgCompiler 50)
 
     -- Resize all profile pictures to 64x48
+    -- Aspect ratio might be mangled
     match "profiles/**.jpg" $ do
         route idRoute
         compile (resizeImageCompiler 64 48)
-    
+
     -- Scale images to fit within a 600x400 box
+    -- Aspect ratio will be preserved
     match "images/**.png" $ do
         route idRoute
         compile (scaleImageCompiler 600 400)
 
-    (... omitted ...)
+    (...)
 ```
 
 Take a look at the [documentation](hackage.haskell.org/package/hakyll-images) for more usage examples.
