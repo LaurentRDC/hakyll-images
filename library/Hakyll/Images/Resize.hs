@@ -23,13 +23,13 @@ box while preserving aspect ratio.
     hakyll $ do
 
         (... omitted ...)
-        -- Resize all profile pictures to 64x48
-        match "profiles/**.jpg" $ do
+        -- Resize all profile pictures with .png extensions to 64x48
+        match "profiles/**.png" $ do
             route idRoute
             compile (resizeImageCompiler 64 48)
         
         -- Scale images to fit within a 600x400 box
-        match "images/**.jpg" $ do
+        match "images/**" $ do
             route idRoute
             compile (scaleImageCompiler 600 400)
         
@@ -58,14 +58,6 @@ import Hakyll.Core.Compiler     (Compiler, getResourceLBS, getUnderlyingExtensio
 type Width = Int
 type Height = Int
 
--- | Encode a dynamic image to a bytestring based on the file extension
-encode :: String -> DynamicImage -> ByteString
-encode ".jpg" = imageToJpg 100
-encode ".png" = imageToPng
-encode ".bmp" = imageToBitmap
-encode ".tiff" = imageToTiff
-encode fmt = error $ "Unsupported format " <> fmt
-
 -- | Resize an image to specified width and height using the bilinear transform.
 -- The aspect ratio may not be respected.
 --
@@ -78,7 +70,7 @@ resize w h = ImageRGBA8 . (scaleBilinear w h) . convertRGBA8
 -- may not be preserved.
 resizeImageCompiler :: Width -> Height -> Compiler (Item ByteString)
 resizeImageCompiler w h = do
-    ext <- getUnderlyingExtension
+    ext <- fromExt <$> getUnderlyingExtension
     imageItem <- fmap (decodeImage . toStrict) <$> getResourceLBS
     case itemBody imageItem of
         Left msg -> error msg
@@ -106,10 +98,37 @@ scale w h img = resize maxWidth maxHeight img
 -- will be preserved.
 scaleImageCompiler :: Width -> Height -> Compiler (Item ByteString)
 scaleImageCompiler w h = do
-    ext <- getUnderlyingExtension
+    ext <- fromExt <$> getUnderlyingExtension
     imageItem <- fmap (decodeImage . toStrict) <$> getResourceLBS
     case itemBody imageItem of
         Left msg -> error msg
         Right image -> do
             let rescaled = scale w h image
             return $ Item (itemIdentifier imageItem) (encode ext rescaled)
+
+
+-- Supported (i.e. encodable) image formats
+data ImageFormat
+    = Jpeg 
+    | Png
+    | Bitmap
+    | Tiff
+
+-- | Translation between file extensions and image formats
+-- It is important to keep track of image formats because Hakyll
+-- compilers provides raw bytestrings and filenames
+fromExt :: String -> ImageFormat
+fromExt ".jpeg" = Jpeg
+fromExt ".jpg"  = Jpeg
+fromExt ".png"  = Png
+fromExt ".bmp"  = Bitmap
+fromExt ".tif"  = Tiff
+fromExt ".tiff" = Tiff
+fromExt ext     = error $ "Unsupported format: " <> ext
+
+-- Encode images based on file extension
+encode :: ImageFormat -> DynamicImage -> ByteString
+encode Jpeg = imageToJpg 100
+encode Png  = imageToPng
+encode Bitmap = imageToBitmap
+encode Tiff = imageToTiff
