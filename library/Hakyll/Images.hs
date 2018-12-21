@@ -7,6 +7,9 @@ License     : BSD3
 Maintainer  : laurent.decotret@outlook.com
 Stability   : stable
 Portability : portable
+
+This package defines a few Hakyll compilers. These compilers help deal with images
+in the context of Hakyll programs, such as JPEG compression or image resizing.
 -}
 module Hakyll.Images (
     -- Jpg compression
