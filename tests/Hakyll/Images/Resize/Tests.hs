@@ -71,7 +71,7 @@ testScalePreservesAspectRatio = do
 
 --------------------------------------------------------------------------------
 tests :: TestTree
-tests = testGroup "Hakyll.Web.Resize.Tests" $ concat
+tests = testGroup "Hakyll.Images.Resize.Tests" $ concat
    [ fromAssertions "rescale" 
         [ testResize 
         , testScale

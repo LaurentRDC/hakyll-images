@@ -73,7 +73,7 @@ testJpgEncodingOutOfUpperBound = do
 
 --------------------------------------------------------------------------------
 tests :: TestTree
-tests = testGroup "Hakyll.Web.CompressJpg.Tests" $ concat
+tests = testGroup "Hakyll.Images.CompressJpg.Tests" $ concat
    [ fromAssertions "compressJpg" 
         [ testCompressionFromImage 
         , testJpgEncodingOutOfLowerBound
