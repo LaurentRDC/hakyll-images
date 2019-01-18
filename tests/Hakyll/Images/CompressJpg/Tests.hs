@@ -11,7 +11,7 @@ import           Test.Tasty.HUnit       (Assertion, assertBool, assertFailure, t
 
 --------------------------------------------------------------------------------
 import           Hakyll.Images.CompressJpg
-import qualified Data.ByteString.Lazy   as B
+import qualified Data.ByteString        as B
 
 import           Control.Exception      (ErrorCall, catch, evaluate)
 
