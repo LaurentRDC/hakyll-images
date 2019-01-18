@@ -15,7 +15,8 @@
 
 ```haskell
 import Hakyll
-import Hakyll.Images        ( compressJpgCompiler
+import Hakyll.Images        ( loadImage
+                            , compressJpgCompiler
                             , resizeImageCompiler
                             , scaleImageCompiler
                             )
