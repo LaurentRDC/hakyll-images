@@ -28,21 +28,22 @@ hakyll $ do
     match "images/**.jpg" $ do
         route idRoute
         compile $ loadImage 
-            >>= (compressJpgCompiler 50)
+            >>= compressJpgCompiler 50
 
     -- Resize all profile pictures to 64x48
     -- Aspect ratio might be mangled
     match "profiles/**.jpg" $ do
         route idRoute
         compile $ loadImage 
-            >>= (resizeImageCompiler 64 48)
-            >>= (compressJpg 50)
+            >>= resizeImageCompiler 64 48
+            >>= compressJpg 50
 
     -- Scale images to fit within a 600x400 box
     -- Aspect ratio will be preserved
     match "images/**.png" $ do
         route idRoute
-        compile (scaleImageCompiler 600 400)
+        compile $ loadImage
+            >>= scaleImageCompiler 600 400
 
     (...)
 ```
