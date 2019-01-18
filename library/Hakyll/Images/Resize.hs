@@ -16,22 +16,23 @@ box while preserving aspect ratio.
 
 @
     import Hakyll
-    import Hakyll.Images        (resizeImageCompiler, scaleImageCompiler)
-    
-    (... omitted ...)
+    import Hakyll.Images        ( resizeImageCompiler 
+                                , scaleImageCompiler
+                                )
     
     hakyll $ do
 
-        (... omitted ...)
         -- Resize all profile pictures with .png extensions to 64x48
         match "profiles/**.png" $ do
             route idRoute
-            compile (resizeImageCompiler 64 48)
+            compile $ loadImage
+                >>= resizeImageCompiler 64 48
         
         -- Scale images to fit within a 600x400 box
         match "images/**" $ do
             route idRoute
-            compile (scaleImageCompiler 600 400)
+            compile $ loadImage
+                >>= scaleImageCompiler 600 400
         
         (... omitted ...)
 @
@@ -44,25 +45,23 @@ module Hakyll.Images.Resize
     , scaleImageCompiler
     ) where
 
-import           Codec.Picture            (convertRGBA8, decodeImage)
-import           Codec.Picture.Types      (DynamicImage(..), imageHeight, imageWidth)
-import           Codec.Picture.Saving
-import           Codec.Picture.Extra      (scaleBilinear)
+import Codec.Picture            (convertRGBA8, decodeImage)
+import Codec.Picture.Types      (DynamicImage(..), imageHeight, imageWidth)
+import Codec.Picture.Extra      (scaleBilinear)
 
-import           Data.ByteString.Lazy     (ByteString, toStrict)
-import qualified Data.ByteString as BS
-import           Data.Ratio               ((%))
+import Data.ByteString          (ByteString)
+import Data.Ratio               ((%))
 
-import           Hakyll.Core.Identifier   (toFilePath)
-import           Hakyll.Core.Item         (Item(..))
-import           Hakyll.Core.Compiler     (Compiler)
+import Hakyll.Core.Identifier   (toFilePath)
+import Hakyll.Core.Item         (Item(..))
+import Hakyll.Core.Compiler     (Compiler)
 
-import           Hakyll.Images.Common     (Image)
+import Hakyll.Images.Common     (Image, encode, fromExt)
 
 type Width = Int
 type Height = Int
 
-decodeImage' :: BS.ByteString -> DynamicImage
+decodeImage' :: ByteString -> DynamicImage
 decodeImage' im = case decodeImage im of
     Left msg -> error msg
     Right image -> image 
@@ -77,10 +76,17 @@ resize w h = ImageRGBA8 . (scaleBilinear w h) . convertRGBA8
 
 -- | Compiler that resizes images to a specific dimensions. Aspect ratio
 -- may not be preserved.
+--
+-- @
+-- match "*.png" $ do
+--     route idRoute
+--     compile $ loadImage 
+--         >>= resizeImageCompiler 48 64
+-- @
 resizeImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 resizeImageCompiler w h item = do
     let ext = (fromExt . toFilePath . itemIdentifier) item 
-    return $ (encode ext . resize w h . decodeImage' . toStrict) <$> item
+    return $ (encode ext . resize w h . decodeImage') <$> item
 
 -- | Scale an image to a size that will fit in the specified width and height,
 -- while preserving aspect ratio.
@@ -100,33 +106,14 @@ scale w h img = resize maxWidth maxHeight img
 
 -- | Compiler that rescales images to fit within dimensions. Aspect ratio
 -- will be preserved.
+--
+-- @
+-- match "*.tiff" $ do
+--     route idRoute
+--     compile $ loadImage 
+--         >>= scaleImageCompiler 48 64
+-- @
 scaleImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 scaleImageCompiler w h item = do
     let ext = (fromExt . toFilePath . itemIdentifier) item 
-    return $ (encode ext . scale w h . decodeImage' . toStrict) <$> item
-
--- Supported (i.e. encodable) image formats
-data ImageFormat
-    = Jpeg 
-    | Png
-    | Bitmap
-    | Tiff
-
--- | Translation between file extensions and image formats
--- It is important to keep track of image formats because Hakyll
--- compilers provides raw bytestrings and filenames
-fromExt :: String -> ImageFormat
-fromExt ".jpeg" = Jpeg
-fromExt ".jpg"  = Jpeg
-fromExt ".png"  = Png
-fromExt ".bmp"  = Bitmap
-fromExt ".tif"  = Tiff
-fromExt ".tiff" = Tiff
-fromExt ext     = error $ "Unsupported format: " <> ext
-
--- Encode images based on file extension
-encode :: ImageFormat -> DynamicImage -> ByteString
-encode Jpeg = imageToJpg 100
-encode Png  = imageToPng
-encode Bitmap = imageToBitmap
-encode Tiff = imageToTiff
+    return $ (encode ext . scale w h . decodeImage') <$> item
