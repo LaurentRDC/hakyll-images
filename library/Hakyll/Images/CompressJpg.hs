@@ -37,13 +37,15 @@ module Hakyll.Images.CompressJpg
     , compressJpg
     ) where
 
-import Data.ByteString.Lazy             (ByteString, toStrict)
+import Data.ByteString.Lazy             (toStrict)
 
 import Codec.Picture.Jpg                (decodeJpeg)
 import Codec.Picture.Saving             (imageToJpg)
 
-import Hakyll.Core.Item                 (Item)
-import Hakyll.Core.Compiler             (Compiler, getResourceLBS)
+import Hakyll.Core.Item                 (Item(..))
+import Hakyll.Core.Compiler             (Compiler)
+
+import Hakyll.Images.Common             (Image)
 
 
 -- | Jpeg encoding quality, from 0 (lower quality) to 100 (best quality).
@@ -54,7 +56,7 @@ type JpgQuality = Int
 -- The quality should be between 0 (lowest quality) and 100 (best quality).
 -- An error is raised if the image cannot be decoded, or if the 
 -- encoding quality is out-of-bounds
-compressJpg :: JpgQuality -> ByteString -> ByteString
+compressJpg :: JpgQuality -> Image -> Image
 compressJpg quality src = case im of
         Left _         -> error $ "Loading the image failed."
         Right dynImage -> if (quality < 0 || quality > 100)
@@ -68,5 +70,5 @@ compressJpg quality src = case im of
 -- | Compiler that compresses a JPG image to a certain quality setting.
 -- The quality should be between 0 (lowest quality) and 100 (best quality).
 -- An error is raised if the image cannot be decoded.
-compressJpgCompiler :: JpgQuality -> Compiler (Item ByteString)
-compressJpgCompiler quality = fmap (compressJpg quality) <$> getResourceLBS
+compressJpgCompiler :: JpgQuality -> Item Image -> Compiler (Item Image)
+compressJpgCompiler quality item = return $ compressJpg quality <$> item 

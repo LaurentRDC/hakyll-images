@@ -44,19 +44,28 @@ module Hakyll.Images.Resize
     , scaleImageCompiler
     ) where
 
-import Codec.Picture            (convertRGBA8, decodeImage)
-import Codec.Picture.Types
-import Codec.Picture.Saving
-import Codec.Picture.Extra      (scaleBilinear)
+import           Codec.Picture            (convertRGBA8, decodeImage)
+import           Codec.Picture.Types      (DynamicImage(..), imageHeight, imageWidth)
+import           Codec.Picture.Saving
+import           Codec.Picture.Extra      (scaleBilinear)
 
-import Data.ByteString.Lazy     (ByteString, toStrict)
-import Data.Ratio               ((%))
+import           Data.ByteString.Lazy     (ByteString, toStrict)
+import qualified Data.ByteString as BS
+import           Data.Ratio               ((%))
 
-import Hakyll.Core.Item         (Item(..), itemBody)
-import Hakyll.Core.Compiler     (Compiler, getResourceLBS, getUnderlyingExtension)
+import           Hakyll.Core.Identifier   (toFilePath)
+import           Hakyll.Core.Item         (Item(..))
+import           Hakyll.Core.Compiler     (Compiler)
+
+import           Hakyll.Images.Common     (Image)
 
 type Width = Int
 type Height = Int
+
+decodeImage' :: BS.ByteString -> DynamicImage
+decodeImage' im = case decodeImage im of
+    Left msg -> error msg
+    Right image -> image 
 
 -- | Resize an image to specified width and height using the bilinear transform.
 -- The aspect ratio may not be respected.
@@ -68,15 +77,10 @@ resize w h = ImageRGBA8 . (scaleBilinear w h) . convertRGBA8
 
 -- | Compiler that resizes images to a specific dimensions. Aspect ratio
 -- may not be preserved.
-resizeImageCompiler :: Width -> Height -> Compiler (Item ByteString)
-resizeImageCompiler w h = do
-    ext <- fromExt <$> getUnderlyingExtension
-    imageItem <- fmap (decodeImage . toStrict) <$> getResourceLBS
-    case itemBody imageItem of
-        Left msg -> error msg
-        Right image -> do
-            let resized = resize w h image
-            return $ Item (itemIdentifier imageItem) (encode ext resized)
+resizeImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
+resizeImageCompiler w h item = do
+    let ext = (fromExt . toFilePath . itemIdentifier) item 
+    return $ (encode ext . resize w h . decodeImage' . toStrict) <$> item
 
 -- | Scale an image to a size that will fit in the specified width and height,
 -- while preserving aspect ratio.
@@ -96,16 +100,10 @@ scale w h img = resize maxWidth maxHeight img
 
 -- | Compiler that rescales images to fit within dimensions. Aspect ratio
 -- will be preserved.
-scaleImageCompiler :: Width -> Height -> Compiler (Item ByteString)
-scaleImageCompiler w h = do
-    ext <- fromExt <$> getUnderlyingExtension
-    imageItem <- fmap (decodeImage . toStrict) <$> getResourceLBS
-    case itemBody imageItem of
-        Left msg -> error msg
-        Right image -> do
-            let rescaled = scale w h image
-            return $ Item (itemIdentifier imageItem) (encode ext rescaled)
-
+scaleImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
+scaleImageCompiler w h item = do
+    let ext = (fromExt . toFilePath . itemIdentifier) item 
+    return $ (encode ext . scale w h . decodeImage' . toStrict) <$> item
 
 -- Supported (i.e. encodable) image formats
 data ImageFormat

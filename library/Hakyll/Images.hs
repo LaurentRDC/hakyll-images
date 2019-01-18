@@ -12,8 +12,11 @@ This package defines a few Hakyll compilers. These compilers help deal with imag
 in the context of Hakyll programs, such as JPEG compression or image resizing.
 -}
 module Hakyll.Images (
+    -- Basic types and functions
+      Image
+    , loadImage
     -- Jpg compression
-      JpgQuality
+    , JpgQuality
     , compressJpg
     , compressJpgCompiler
     -- Image scaling
@@ -26,3 +29,4 @@ module Hakyll.Images (
 
 import Hakyll.Images.CompressJpg
 import Hakyll.Images.Resize
+import Hakyll.Images.Common
