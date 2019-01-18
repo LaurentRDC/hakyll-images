@@ -14,7 +14,9 @@ in the context of Hakyll programs, such as JPEG compression or image resizing.
 Items must be loaded before compilers can be used, like so:
 @
     import Hakyll
-    import Hakyll.Images        ( resizeImageCompiler )
+    import Hakyll.Images        ( loadImage
+                                , resizeImageCompiler 
+                                )
     
     hakyll $ do
 
@@ -31,7 +33,8 @@ Compilers can be sequenced easily as well:
 
 @
     import Hakyll
-    import Hakyll.Images        ( compressJpgCompiler
+    import Hakyll.Images        ( loadImage
+                                , compressJpgCompiler
                                 , scaleImageCompiler 
                                 )
     

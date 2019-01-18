@@ -16,7 +16,8 @@ box while preserving aspect ratio.
 
 @
     import Hakyll
-    import Hakyll.Images        ( resizeImageCompiler 
+    import Hakyll.Images        ( loadImage
+                                , resizeImageCompiler 
                                 , scaleImageCompiler
                                 )
     

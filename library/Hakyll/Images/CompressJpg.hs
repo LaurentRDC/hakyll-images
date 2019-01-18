@@ -16,7 +16,9 @@ The @compressJpgCompiler@ is expected to be used like this:
 
 @
     import Hakyll
-    import Hakyll.Images        (compressJpgCompiler)
+    import Hakyll.Images        ( loadImage
+                                , compressJpgCompiler
+                                )
     
     hakyll $ do
 
