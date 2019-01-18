@@ -46,8 +46,8 @@ data ImageFormat
 --     compile $ loadImage 
 --         >>= compressJpgCompiler 50
 -- @
-loadImage :: Compiler Image
-loadImage = (toStrict . itemBody) <$> getResourceLBS
+loadImage :: Compiler (Item Image)
+loadImage = fmap toStrict <$> getResourceLBS
 
 -- | Translation between file extensions and image formats.
 -- It is important to keep track of image formats because Hakyll
