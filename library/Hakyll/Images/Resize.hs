@@ -53,11 +53,10 @@ import Codec.Picture.Extra      (scaleBilinear)
 import Data.ByteString          (ByteString)
 import Data.Ratio               ((%))
 
-import Hakyll.Core.Identifier   (toFilePath)
 import Hakyll.Core.Item         (Item(..))
 import Hakyll.Core.Compiler     (Compiler)
 
-import Hakyll.Images.Common     (Image, encode, fromExt)
+import Hakyll.Images.Common     (Image, encode, format, image)
 
 type Width = Int
 type Height = Int
@@ -65,7 +64,7 @@ type Height = Int
 decodeImage' :: ByteString -> DynamicImage
 decodeImage' im = case decodeImage im of
     Left msg -> error msg
-    Right image -> image 
+    Right im' -> im' 
 
 -- | Resize an image to specified width and height using the bilinear transform.
 -- The aspect ratio may not be respected.
@@ -86,8 +85,8 @@ resize w h = ImageRGBA8 . (scaleBilinear w h) . convertRGBA8
 -- @
 resizeImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 resizeImageCompiler w h item = do
-    let ext = (fromExt . toFilePath . itemIdentifier) item 
-    return $ (encode ext . resize w h . decodeImage') <$> item
+    let fmt = (format . itemBody) item
+    return $ (encode fmt . resize w h . decodeImage' . image) <$> item
 
 -- | Scale an image to a size that will fit in the specified width and height,
 -- while preserving aspect ratio.
@@ -116,5 +115,5 @@ scale w h img = resize maxWidth maxHeight img
 -- @
 scaleImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 scaleImageCompiler w h item = do
-    let ext = (fromExt . toFilePath . itemIdentifier) item 
-    return $ (encode ext . scale w h . decodeImage') <$> item
+    let fmt = (format . itemBody) item
+    return $ (encode fmt . scale w h . decodeImage' . image) <$> item

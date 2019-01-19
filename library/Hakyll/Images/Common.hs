@@ -9,9 +9,11 @@ Stability   : stable
 Portability : portable
 -}
 
-module Hakyll.Images.Common ( Image 
-                            , ImageFormat
-                            , fromExt
+module Hakyll.Images.Common ( Image
+                            , Image_(..)
+                            , ImageFormat(..)
+                            , format
+                            , image
                             , loadImage
                             , encode
                             ) where
@@ -24,11 +26,8 @@ import Codec.Picture.Saving
 import Data.ByteString.Lazy             (toStrict)
 import Data.ByteString                  (ByteString)
 
-import Hakyll.Core.Compiler             (Compiler, getResourceLBS)
+import Hakyll.Core.Compiler             (Compiler, getResourceLBS, getUnderlyingExtension)
 import Hakyll.Core.Item                 (Item(..))
-
-
-type Image = ByteString
 
 -- Supported (i.e. encodable) image formats
 data ImageFormat
@@ -36,6 +35,23 @@ data ImageFormat
     | Png
     | Bitmap
     | Tiff
+    deriving (Eq)
+
+-- Polymorphic type only to get an instance of functor
+data Image_ a = Image ImageFormat a
+
+instance Functor Image_ where
+    fmap f (Image fmt a) = Image fmt (f a)
+
+type Image = Image_ ByteString
+
+-- | Extract format from an image
+format :: Image_ a -> ImageFormat
+format (Image fmt _) = fmt
+
+-- | Extract data from image
+image :: Image_ a -> a
+image (Image _ im) = im
 
 -- | Load an image from a file.
 -- This function can be combined with other compilers.
@@ -47,7 +63,10 @@ data ImageFormat
 --         >>= compressJpgCompiler 50
 -- @
 loadImage :: Compiler (Item Image)
-loadImage = fmap toStrict <$> getResourceLBS
+loadImage = do
+    content <- fmap toStrict <$> getResourceLBS
+    fmt <- fromExt <$> getUnderlyingExtension
+    return $ (Image fmt) <$> content
 
 -- | Translation between file extensions and image formats.
 -- It is important to keep track of image formats because Hakyll
@@ -63,7 +82,7 @@ fromExt ext     = error $ "Unsupported format: " <> ext
 
 -- Encode images based on file extension
 encode :: ImageFormat -> DynamicImage -> Image
-encode Jpeg = toStrict . imageToJpg 100
-encode Png  = toStrict . imageToPng
-encode Bitmap = toStrict . imageToBitmap
-encode Tiff = toStrict . imageToTiff
+encode Jpeg im   = Image Jpeg   $ (toStrict . imageToJpg 100) im
+encode Png im    = Image Png    $ (toStrict . imageToPng) im
+encode Bitmap im = Image Bitmap $ (toStrict . imageToBitmap) im
+encode Tiff im   = Image Tiff   $ (toStrict . imageToTiff) im

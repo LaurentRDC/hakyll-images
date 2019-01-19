@@ -11,6 +11,7 @@ import           Test.Tasty.HUnit       (Assertion, assertBool, assertFailure, t
 
 --------------------------------------------------------------------------------
 import           Hakyll.Images.CompressJpg
+import           Hakyll.Images.Common
 import qualified Data.ByteString        as B
 
 import           Control.Exception      (ErrorCall, catch, evaluate)
@@ -18,8 +19,8 @@ import           Control.Exception      (ErrorCall, catch, evaluate)
 import           Text.Printf            (printf)
 
 
-testJpg :: IO B.ByteString 
-testJpg = B.readFile "tests/data/piccolo.jpg"
+testJpg :: IO Image 
+testJpg = Image Jpeg <$> (B.readFile "tests/data/piccolo.jpg")
 
 fromAssertions :: String       -- ^ Name
                -> [Assertion]  -- ^ Cases
@@ -31,21 +32,21 @@ fromAssertions name =
 -- than the initial image
 testCompressionFromImage :: Assertion
 testCompressionFromImage = do
-    image <- testJpg
-    let initialSize = B.length image
-        finalSize   = B.length $ compressJpg 25 image
+    im <- testJpg
+    let initialSize = (B.length . image) im
+        finalSize   = (B.length . image . compressJpg 25) im
     
     assertBool "Image was not compressed" (initialSize > finalSize)
 
 -- Test that specifying a JPG encoding below 0 will fail
 testJpgEncodingOutOfLowerBound :: Assertion
 testJpgEncodingOutOfLowerBound = do
-    image <- testJpg
+    im <- testJpg
     -- Catching exceptions is an idea from here:
     -- https://stackoverflow.com/questions/46330592/is-it-possible-to-assert-an-error-case-in-hunit
     -- Since compressJpg is a "pure" function, we need to evaluate it in an IO context
     -- to catch errors.
-    errored <- catch (evaluate (compressJpg (-10) image) >> pure False) handler
+    errored <- catch (evaluate (compressJpg (-10) im) >> pure False) handler
     if errored then
         pure ()
     else 
@@ -57,12 +58,12 @@ testJpgEncodingOutOfLowerBound = do
 -- Test that specifying a JPG encoding above 100 will fail
 testJpgEncodingOutOfUpperBound :: Assertion
 testJpgEncodingOutOfUpperBound = do
-    image <- testJpg
+    im <- testJpg
     -- Catching exceptions is an idea from here:
     -- https://stackoverflow.com/questions/46330592/is-it-possible-to-assert-an-error-case-in-hunit
     -- Since compressJpg is a "pure" function, we need to evaluate it in an IO context
     -- to catch errors.
-    errored <- catch (evaluate (compressJpg 111 image) >> pure False) handler
+    errored <- catch (evaluate (compressJpg 111 im) >> pure False) handler
     if errored then
         pure ()
     else 

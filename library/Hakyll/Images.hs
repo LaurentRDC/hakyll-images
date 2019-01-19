@@ -12,6 +12,7 @@ This package defines a few Hakyll compilers. These compilers help deal with imag
 in the context of Hakyll programs, such as JPEG compression or image resizing.
 
 Items must be loaded before compilers can be used, like so:
+
 @
     import Hakyll
     import Hakyll.Images        ( loadImage
