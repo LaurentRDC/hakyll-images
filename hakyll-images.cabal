@@ -1,13 +1,13 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.1.
+-- This file has been generated from package.yaml by hpack version 0.30.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2c391e45aeacd80cae44a88331bc4c4cff67e69127f1aaed68d4fb7ea7f56d29
+-- hash: ae9f128028bfb7b003b7940adbbacf13e15a99ee309055e70cf616edbd4fb9b2
 
 name:           hakyll-images
-version:        0.3.0
+version:        0.3.1
 synopsis:       Hakyll utilities to work with images
 description:    hakyll-images is an add-on to the hakyll package. It adds utilities to work with images, including JPEG compression.
 category:       Web
