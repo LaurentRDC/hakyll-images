@@ -5,7 +5,7 @@ Description : Hakyll compiler to compress Jpeg images
 Copyright   : (c) Laurent P René de Cotret, 2019
 License     : BSD3
 Maintainer  : laurent.decotret@outlook.com
-Stability   : stable
+Stability   : unstable
 Portability : portable
 
 This module defines a Hakyll compiler, 'compressJpgCompiler', which can be used to

@@ -5,7 +5,7 @@ Description : Hakyll compiler to resize images
 Copyright   : (c) Laurent P René de Cotret, 2019
 License     : BSD3
 Maintainer  : laurent.decotret@outlook.com
-Stability   : stable
+Stability   : unstable
 Portability : portable
 
 This module defines two Hakyll compilers. The first one, 'resizeImageCompiler', 
