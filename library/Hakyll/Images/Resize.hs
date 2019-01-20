@@ -56,7 +56,7 @@ import Data.Ratio               ((%))
 import Hakyll.Core.Item         (Item(..))
 import Hakyll.Core.Compiler     (Compiler)
 
-import Hakyll.Images.Common     (Image, encode, format, image)
+import Hakyll.Images.Common     (Image(..), encode)
 
 type Width = Int
 type Height = Int
@@ -90,7 +90,7 @@ resizeImageCompiler w h item = do
 
 -- | Scale an image to a size that will fit in the specified width and height,
 -- while preserving aspect ratio.
---
+-- 
 -- In the process, an image is converted to RGBA8. Therefore, some information
 -- loss may occur.
 scale :: Width -> Height -> DynamicImage -> DynamicImage

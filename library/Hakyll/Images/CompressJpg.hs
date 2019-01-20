@@ -45,8 +45,7 @@ import Codec.Picture.Saving             (imageToJpg)
 import Hakyll.Core.Item                 (Item(..))
 import Hakyll.Core.Compiler             (Compiler)
 
-import Hakyll.Images.Common             ( Image
-                                        , Image_(..)
+import Hakyll.Images.Common             ( Image(..)
                                         , ImageFormat(..)
                                         , image
                                         , format

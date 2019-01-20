@@ -12,11 +12,8 @@ Stability   : unstable
 Portability : portable
 -}
 
-module Hakyll.Images.Common ( Image
-                            , Image_(..)
+module Hakyll.Images.Common ( Image(..)
                             , ImageFormat(..)
-                            , format
-                            , image
                             , loadImage
                             , encode
                             ) where
@@ -44,17 +41,15 @@ data ImageFormat
     | Tiff
     deriving (Eq, Generic)
 
+-- Automatic derivation of Binary instances requires Generic
 instance Binary ImageFormat
 
 -- Polymorphic type only to get an instance of functor.
 -- Do not use this type.
-data Image_ a = Image ImageFormat a 
+data Image = Image { format :: ImageFormat
+                   , image :: ByteString
+                   }
     deriving (Typeable)
-
-instance Functor Image_ where
-    fmap f (Image fmt a) = Image fmt (f a)
-
-type Image = Image_ ByteString
 
 -- When writing to disk, we ignore the image format.
 -- Trusting users to route correctly.
@@ -62,17 +57,10 @@ instance Writable Image where
     -- Write the bytestring content
     write fp item  = write fp (image <$> item)
 
+-- Binary instance looks similar to the binary instance for a Hakyll Item
 instance Binary Image where
     put (Image fmt content) = put fmt >> put content
     get                     = Image <$> get <*> get
-
--- | Extract format from an image
-format :: Image_ a -> ImageFormat
-format (Image fmt _) = fmt
-
--- | Extract data from image
-image :: Image_ a -> a
-image (Image _ im) = im
 
 -- | Load an image from a file.
 -- This function can be combined with other compilers.
