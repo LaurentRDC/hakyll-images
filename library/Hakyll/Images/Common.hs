@@ -1,4 +1,7 @@
-
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE DeriveDataTypeable   #-}
+{-# LANGUAGE DeriveGeneric        #-}
 {-|
 Module      : Hakyll.Images.Common
 Description : Types and utilities for Hakyll.Images
@@ -23,11 +26,15 @@ import Prelude                          hiding (readFile)
 import Codec.Picture.Types              (DynamicImage)
 import Codec.Picture.Saving
 
+import Data.Binary                      (Binary(..))
 import Data.ByteString.Lazy             (toStrict)
 import Data.ByteString                  (ByteString)
+import Data.Typeable                    (Typeable)
+import GHC.Generics                     (Generic)
 
 import Hakyll.Core.Compiler             (Compiler, getResourceLBS, getUnderlyingExtension)
 import Hakyll.Core.Item                 (Item(..))
+import Hakyll.Core.Writable             (Writable(..))
 
 -- Supported (i.e. encodable) image formats
 data ImageFormat
@@ -35,15 +42,29 @@ data ImageFormat
     | Png
     | Bitmap
     | Tiff
-    deriving (Eq)
+    deriving (Eq, Generic)
 
--- Polymorphic type only to get an instance of functor
-data Image_ a = Image ImageFormat a
+instance Binary ImageFormat
+
+-- Polymorphic type only to get an instance of functor.
+-- Do not use this type.
+data Image_ a = Image ImageFormat a 
+    deriving (Typeable)
 
 instance Functor Image_ where
     fmap f (Image fmt a) = Image fmt (f a)
 
 type Image = Image_ ByteString
+
+-- When writing to disk, we ignore the image format.
+-- Trusting users to route correctly.
+instance Writable Image where
+    -- Write the bytestring content
+    write fp item  = write fp (image <$> item)
+
+instance Binary Image where
+    put (Image fmt content) = put fmt >> put content
+    get                     = Image <$> get <*> get
 
 -- | Extract format from an image
 format :: Image_ a -> ImageFormat

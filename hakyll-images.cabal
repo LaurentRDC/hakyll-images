@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ae9f128028bfb7b003b7940adbbacf13e15a99ee309055e70cf616edbd4fb9b2
+-- hash: 4c5b7deec40b2ee119f5e744e3f1e9a5d2bea7573fca7d039ee928ad91e8fdb3
 
 name:           hakyll-images
 version:        0.3.1
@@ -46,6 +46,7 @@ library
       JuicyPixels >=3
     , JuicyPixels-extra >0.3
     , base >=4.8 && <5
+    , binary >=0.5 && <0.10
     , bytestring >=0.9 && <0.11
     , hakyll >4
   default-language: Haskell2010
@@ -54,6 +55,7 @@ test-suite spec
   type: exitcode-stdio-1.0
   main-is: TestSuite.hs
   other-modules:
+      Hakyll.Images.Common.Tests
       Hakyll.Images.CompressJpg.Tests
       Hakyll.Images.Resize.Tests
       Hakyll.Images
@@ -70,7 +72,10 @@ test-suite spec
     , JuicyPixels >=3
     , JuicyPixels-extra >0.3
     , base >=4.8 && <5
+    , binary >=0.5 && <0.10
     , bytestring >=0.9 && <0.11
+    , directory >=1.0
+    , filepath >=1.0 && <1.5
     , hakyll >4
     , hakyll-images
     , tasty >=0.11 && <1.2
