@@ -83,10 +83,12 @@ resize w h = ImageRGBA8 . (scaleBilinear w h) . convertRGBA8
 --     compile $ loadImage 
 --         >>= resizeImageCompiler 48 64
 -- @
+--
+-- Note that in the resizing process, images will be converted to RGBA8.
 resizeImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
-resizeImageCompiler w h item = do
+resizeImageCompiler w h item =
     let fmt = (format . itemBody) item
-    return $ (encode fmt . resize w h . decodeImage' . image) <$> item
+    in return $ (encode fmt . resize w h . decodeImage' . image) <$> item
 
 -- | Scale an image to a size that will fit in the specified width and height,
 -- while preserving aspect ratio.
@@ -113,7 +115,9 @@ scale w h img = resize maxWidth maxHeight img
 --     compile $ loadImage 
 --         >>= scaleImageCompiler 48 64
 -- @
+--
+-- Note that in the resizing process, images will be converted to RGBA8.
 scaleImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
-scaleImageCompiler w h item = do
+scaleImageCompiler w h item =
     let fmt = (format . itemBody) item
-    return $ (encode fmt . scale w h . decodeImage' . image) <$> item
+    in return $ (encode fmt . scale w h . decodeImage' . image) <$> item
