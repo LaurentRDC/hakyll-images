@@ -1,5 +1,9 @@
 # Change log
 
+## Release 0.4.2 (development)
+
+* Added `ensureFitCompiler`, a Hakyll compiler much like `scaleImageCompiler` but that will only scale images down.
+
 ## Release 0.4.1
 
 * Added some regression tests

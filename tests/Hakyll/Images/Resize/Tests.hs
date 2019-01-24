@@ -11,7 +11,7 @@ import           Test.HUnit.Approx      (assertApproxEqual)
 
 
 --------------------------------------------------------------------------------
-import           Hakyll.Images.Resize
+import           Hakyll.Images
 import qualified Data.ByteString        as B
 import           Data.Ratio             ((%))
 
@@ -57,6 +57,20 @@ testScale = do
     assertEqual "Image width was not scaled properly" width 600
     assertBool "Image height was not scaled property" (height<= 400)
 
+-- Test that the images that already fit in dimensions are not scaled
+testEnsureFit :: Assertion
+testEnsureFit = do
+    image <- testJpg
+    let (originalWidth, originalHeight) = (imageWidth . convertRGBA8 $ image, imageHeight . convertRGBA8 $ image)
+        scaledImage = ensureFit 2000 2000 image
+        converted = convertRGBA8 scaledImage
+        (width, height) = ( imageWidth converted
+                          , imageHeight converted
+                          )
+    assertEqual "Image width was not scaled properly" width originalWidth
+    assertEqual "Image height was not scaled property" height originalHeight
+
+
 -- Test that the rescaled image has the same aspect ratio
 testScalePreservesAspectRatio :: Assertion
 testScalePreservesAspectRatio = do
@@ -73,8 +87,11 @@ testScalePreservesAspectRatio = do
 tests :: TestTree
 tests = testGroup "Hakyll.Images.Resize.Tests" $ concat
    [ fromAssertions "rescale" 
-        [ testResize 
-        , testScale
+        [ testScale
         , testScalePreservesAspectRatio
-        ] 
+        ]
+    , fromAssertions "ensureFit"
+        [ testEnsureFit ] 
+    , fromAssertions "resize" 
+        [ testResize ]
     ]

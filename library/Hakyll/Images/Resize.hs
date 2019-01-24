@@ -44,6 +44,8 @@ module Hakyll.Images.Resize
     , resizeImageCompiler
     , scale
     , scaleImageCompiler
+    , ensureFit
+    , ensureFitCompiler
     ) where
 
 import Codec.Picture            (convertRGBA8, decodeImage)
@@ -74,6 +76,49 @@ decodeImage' im = case decodeImage im of
 resize :: Width -> Height -> DynamicImage -> DynamicImage
 resize w h = ImageRGBA8 . (scaleBilinear w h) . convertRGBA8
 
+-- | Scale an image to a size that will fit in the specified width and height,
+-- while preserving aspect ratio. Images might be scaled up as well.
+-- 
+-- In the process, an image is converted to RGBA8. Therefore, some information
+-- loss may occur.
+--
+-- To scale images down only, take a look at 'ensureFit'.
+scale :: Width -> Height -> DynamicImage -> DynamicImage
+scale w h = scale' w h True
+
+-- | Scale an image to a size that will fit in the specified width and height,
+-- while preserving aspect ratio. Images might be scaled up as well.
+-- 
+-- In the process, an image is converted to RGBA8. Therefore, some information
+-- loss may occur.
+scale' :: Width         -- ^ Desired width.
+       -> Height        -- ^ Desired height.
+       -> Bool          -- ^ Allow scaling up as well.
+       -> DynamicImage  -- ^ Source image
+       -> DynamicImage  -- ^ Scaled image.
+scale' w h upAllowed img = resize maxWidth maxHeight img
+    where
+        img' = convertRGBA8 img -- Required to extract height and width
+        (imgWidth, imgHeight) = (imageWidth img', imageHeight img')
+        -- Find the smallest resizing that will accomodate both the width 
+        -- and height.
+        -- If we don't allow scaling up, minimum scaling is 1
+        resizing = if upAllowed 
+            then min (w % imgWidth) (h % imgHeight)
+            else minimum [w % imgWidth, h % imgHeight, 1]
+        maxWidth = round (resizing * fromIntegral imgWidth)
+        maxHeight = round (resizing * fromIntegral imgHeight)
+
+-- | Scale an image down to a size that will fit in the specified width and height,
+-- while preserving aspect ratio.
+-- 
+-- In the process, an image is converted to RGBA8. Therefore, some information
+-- loss may occur.
+--
+-- To scale images up __or__ down, take a look at 'scale'.
+ensureFit :: Width -> Height -> DynamicImage -> DynamicImage
+ensureFit w h = scale' w h False
+
 -- | Compiler that resizes images to a specific dimensions. Aspect ratio
 -- may not be preserved.
 --
@@ -85,29 +130,14 @@ resize w h = ImageRGBA8 . (scaleBilinear w h) . convertRGBA8
 -- @
 --
 -- Note that in the resizing process, images will be converted to RGBA8.
+-- To preserve aspect ratio, take a look at 'scaleImageCompiler'.
 resizeImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 resizeImageCompiler w h item =
     let fmt = (format . itemBody) item
     in return $ (encode fmt . resize w h . decodeImage' . image) <$> item
 
--- | Scale an image to a size that will fit in the specified width and height,
--- while preserving aspect ratio.
--- 
--- In the process, an image is converted to RGBA8. Therefore, some information
--- loss may occur.
-scale :: Width -> Height -> DynamicImage -> DynamicImage
-scale w h img = resize maxWidth maxHeight img
-    where
-        img' = convertRGBA8 img -- Required to extract height and width
-        (imgWidth, imgHeight) = (imageWidth img', imageHeight img')
-        -- Find the smallest resizing that will accomodate both the width 
-        -- and height.
-        resizing = min (w % imgWidth) (h % imgHeight)
-        maxWidth = round (resizing * fromIntegral imgWidth)
-        maxHeight = round (resizing * fromIntegral imgHeight)
-
 -- | Compiler that rescales images to fit within dimensions. Aspect ratio
--- will be preserved.
+-- will be preserved. Images might be scaled up as well.
 --
 -- @
 -- match "*.tiff" $ do
@@ -117,7 +147,25 @@ scale w h img = resize maxWidth maxHeight img
 -- @
 --
 -- Note that in the resizing process, images will be converted to RGBA8.
+-- To ensure images are only scaled __down__, take a look at 'ensureFitCompiler'.
 scaleImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 scaleImageCompiler w h item =
     let fmt = (format . itemBody) item
     in return $ (encode fmt . scale w h . decodeImage' . image) <$> item
+
+-- | Compiler that ensures images will fit within dimensions. Images might 
+-- be scaled down, but never up.  Aspect ratio will be preserved.
+--
+-- @
+-- match "*.tiff" $ do
+--     route idRoute
+--     compile $ loadImage 
+--         >>= ensureFitCompiler 48 64
+-- @
+--
+-- Note that in the resizing process, images will be converted to RGBA8.
+-- To allow the possibility of scaling up, take a look at 'scaleImageCompiler'.
+ensureFitCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
+ensureFitCompiler w h item  = 
+    let fmt = (format . itemBody) item
+    in return $ (encode fmt . ensureFit w h . decodeImage' . image) <$> item
