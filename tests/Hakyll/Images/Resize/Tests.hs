@@ -54,8 +54,9 @@ testScale = do
         (width, height) = ( imageWidth converted
                           , imageHeight converted
                           )
-    assertEqual "Image width was not scaled properly" width 600
-    assertBool "Image height was not scaled property" (height<= 400)
+    assertBool "Image width was not scaled properly" (width <= 600)
+    assertBool "Image height was not scaled properly" (height<= 400)
+    assertBool "Image overall was not scaled properly" (width == 600 || height == 400)
 
 -- Test that the images that already fit in dimensions are not scaled
 testEnsureFit :: Assertion

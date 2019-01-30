@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.30.0.
+-- This file has been generated from package.yaml by hpack version 0.31.1.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5135144b706c5b184add42dcf77ade88f84bac8f521e699c4ce460b16b097fac
+-- hash: e613644a95958c687c5c505d2594558a66bd3d97cdbd40448ca87fe26bcc1f1a
 
 name:           hakyll-images
 version:        0.4.2
@@ -25,6 +25,7 @@ extra-source-files:
     README.md
     stack.yaml
 data-files:
+    tests/data/issue_3.jpg
     tests/data/piccolo.jpg
 
 source-repository head
