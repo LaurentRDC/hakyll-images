@@ -83,6 +83,7 @@ loadImage = do
 fromExt :: String -> ImageFormat
 fromExt ".jpeg" = Jpeg
 fromExt ".jpg"  = Jpeg
+fromExt ".JPG"  = Jpeg
 fromExt ".png"  = Png
 fromExt ".bmp"  = Bitmap
 fromExt ".tif"  = Tiff
