@@ -26,6 +26,7 @@ import Codec.Picture.Saving
 import Data.Binary                      (Binary(..))
 import Data.ByteString.Lazy             (toStrict)
 import Data.ByteString                  (ByteString)
+import Data.Char                        (toLower)
 import Data.Typeable                    (Typeable)
 import GHC.Generics                     (Generic)
 
@@ -79,16 +80,19 @@ loadImage = do
 
 -- | Translation between file extensions and image formats.
 -- It is important to keep track of image formats because Hakyll
--- compilers provides raw bytestrings and filenames
+-- compilers provides raw bytestrings and filenames.
+--
+-- This function is case-insensitive
 fromExt :: String -> ImageFormat
-fromExt ".jpeg" = Jpeg
-fromExt ".jpg"  = Jpeg
-fromExt ".JPG"  = Jpeg
-fromExt ".png"  = Png
-fromExt ".bmp"  = Bitmap
-fromExt ".tif"  = Tiff
-fromExt ".tiff" = Tiff
-fromExt ext     = error $ "Unsupported format: " <> ext
+fromExt ext = fromExt' $ toLower <$> ext
+    where
+        fromExt' ".jpeg" = Jpeg
+        fromExt' ".jpg"  = Jpeg
+        fromExt' ".png"  = Png
+        fromExt' ".bmp"  = Bitmap
+        fromExt' ".tif"  = Tiff
+        fromExt' ".tiff" = Tiff
+        fromExt' ext'     = error $ "Unsupported format: " <> ext'
 
 -- Encode images based on file extension
 encode :: ImageFormat -> DynamicImage -> Image

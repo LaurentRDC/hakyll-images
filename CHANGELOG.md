@@ -1,6 +1,10 @@
 # Change log
 
-## Release 0.4.2 (development)
+## Release 0.4.3
+
+* hakyll-images now handles file extensions in a case-insensitive manner (extension of PR #4).
+
+## Release 0.4.2
 
 * Added `ensureFitCompiler`, a Hakyll compiler much like `scaleImageCompiler` but that will only scale images down.
 
