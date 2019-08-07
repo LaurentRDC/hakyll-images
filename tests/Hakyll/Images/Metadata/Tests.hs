@@ -7,7 +7,7 @@ module Hakyll.Images.Metadata.Tests
 
 --------------------------------------------------------------------------------
 import           Test.Tasty             (TestTree, testGroup)
-import           Test.Tasty.HUnit       (Assertion, assertBool, assertEqual, testCase)
+import           Test.Tasty.HUnit       (Assertion, assertBool, testCase)
 
 
 --------------------------------------------------------------------------------
