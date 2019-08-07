@@ -1,5 +1,9 @@
 # Change log
 
+## Release 0.4.4
+
+* Added the `imageMetadata` compiler, to extract metadata from images.
+
 ## Release 0.4.3
 
 * hakyll-images now handles file extensions in a case-insensitive manner (extension of PR #4).

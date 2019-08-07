@@ -57,6 +57,8 @@ module Hakyll.Images (
     -- Basic types and functions
       Image
     , loadImage
+    -- Handling metadata
+    , module Hakyll.Images.Metadata
     -- Jpg compression
     , JpgQuality
     , compressJpg
@@ -74,3 +76,4 @@ module Hakyll.Images (
 import Hakyll.Images.CompressJpg
 import Hakyll.Images.Resize
 import Hakyll.Images.Common
+import Hakyll.Images.Metadata

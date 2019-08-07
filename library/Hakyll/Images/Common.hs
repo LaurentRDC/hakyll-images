@@ -20,6 +20,7 @@ module Hakyll.Images.Common ( Image(..)
 
 import Prelude                          hiding (readFile)
 
+
 import Codec.Picture.Types              (DynamicImage)
 import Codec.Picture.Saving
 
@@ -34,6 +35,7 @@ import Hakyll.Core.Compiler             (Compiler, getResourceLBS, getUnderlying
 import Hakyll.Core.Item                 (Item(..))
 import Hakyll.Core.Writable             (Writable(..))
 
+
 -- Supported (i.e. encodable) image formats
 data ImageFormat
     = Jpeg 
@@ -42,15 +44,16 @@ data ImageFormat
     | Tiff
     deriving (Eq, Generic)
 
+
 -- Automatic derivation of Binary instances requires Generic
 instance Binary ImageFormat
 
--- Polymorphic type only to get an instance of functor.
--- Do not use this type.
+
 data Image = Image { format :: ImageFormat
                    , image :: ByteString
                    }
     deriving (Typeable)
+
 
 -- When writing to disk, we ignore the image format.
 -- Trusting users to route correctly.
@@ -58,10 +61,12 @@ instance Writable Image where
     -- Write the bytestring content
     write fp item  = write fp (image <$> item)
 
+
 -- Binary instance looks similar to the binary instance for a Hakyll Item
 instance Binary Image where
     put (Image fmt content) = put fmt >> put content
     get                     = Image <$> get <*> get
+
 
 -- | Load an image from a file.
 -- This function can be combined with other compilers.
@@ -78,6 +83,7 @@ loadImage = do
     fmt <- fromExt <$> getUnderlyingExtension
     return $ (Image fmt) <$> content
 
+
 -- | Translation between file extensions and image formats.
 -- It is important to keep track of image formats because Hakyll
 -- compilers provides raw bytestrings and filenames.
@@ -93,6 +99,7 @@ fromExt ext = fromExt' $ toLower <$> ext
         fromExt' ".tif"  = Tiff
         fromExt' ".tiff" = Tiff
         fromExt' ext'     = error $ "Unsupported format: " <> ext'
+
 
 -- Encode images based on file extension
 encode :: ImageFormat -> DynamicImage -> Image
