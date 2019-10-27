@@ -37,7 +37,7 @@ hakyll $ do
         route idRoute
         compile $ loadImage 
             >>= resizeImageCompiler 64 48
-            >>= compressJpg 50
+            >>= compressJpgCompiler 50
 
     -- Scale images to fit within a 600x400 box
     -- Aspect ratio will be preserved
