@@ -78,12 +78,6 @@ stack install # Alternatively, `cabal install`
 
 The documentation for the latest release is available on the [Hackage page](http://hackage.haskell.org/package/hakyll-images/). 
 
-## Upcoming features
-
-Here are the upcoming features of `hakyll-images`:
-
-- [ ] Format conversion
-
 ## Support  Issues / Feature requests
 
 All support requests (e.g. installation issues, unclear documentation, bugs, etc.) should of [filed on Github as an issue](https://github.com/LaurentRDC/hakyll-images/issues/)
