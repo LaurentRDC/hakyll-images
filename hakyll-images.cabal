@@ -15,7 +15,7 @@ homepage:       https://github.com/LaurentRDC/hakyll-images#readme
 bug-reports:    https://github.com/LaurentRDC/hakyll-images/issues
 author:         Laurent P. René de Cotret
 maintainer:     Laurent P. René de Cotret
-license:        BSD3
+license:        BSD-3-Clause
 license-file:   LICENSE.md
 build-type:     Simple
 extra-source-files:
