@@ -21,7 +21,6 @@ build-type:     Simple
 extra-source-files:
     CHANGELOG.md
     LICENSE.md
-    package.yaml
     README.md
     stack.yaml
 data-files:
