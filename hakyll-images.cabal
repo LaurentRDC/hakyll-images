@@ -1,13 +1,13 @@
-cabal-version: 1.12
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b8546296308b75bbf655dd856a069155995bfa86cef044e6b1366acc46a813aa
+-- hash: 545c4d291679bf352c162203073efbd820aec74046f6c1c84fb65ae5ff5e18f8
 
 name:           hakyll-images
-version:        0.4.4
+version:        1.0.0
 synopsis:       Hakyll utilities to work with images
 description:    hakyll-images is an add-on to the hakyll package. It adds utilities to work with images, including JPEG compression.
 category:       Web
@@ -44,11 +44,11 @@ library
       library
   ghc-options: -Wall -Wcompat
   build-depends:
-      JuicyPixels >=3
-    , JuicyPixels-extra >0.3
+      JuicyPixels >=3 && <4
+    , JuicyPixels-extra >0.3 && <1
     , base >=4.8 && <5
-    , binary >=0.5 && <0.10
-    , bytestring >=0.9 && <0.11
+    , binary >=0.5 && <1
+    , bytestring >=0.9 && <1
     , hakyll >4
   default-language: Haskell2010
 
@@ -72,11 +72,11 @@ test-suite spec
   ghc-options: -Wall -Wcompat
   build-depends:
       HUnit-approx >=1 && <2
-    , JuicyPixels >=3
-    , JuicyPixels-extra >0.3
+    , JuicyPixels >=3 && <4
+    , JuicyPixels-extra >0.3 && <1
     , base >=4.8 && <5
-    , binary >=0.5 && <0.10
-    , bytestring >=0.9 && <0.11
+    , binary >=0.5 && <1
+    , bytestring >=0.9 && <1
     , directory >=1 && <2
     , filepath >=1 && <2
     , hakyll >4
