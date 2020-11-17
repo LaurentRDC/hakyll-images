@@ -39,6 +39,8 @@ library
       Hakyll.Images.Common
       Hakyll.Images.Metadata
       Paths_hakyll_images
+  autogen-modules:
+      Paths_hakyll_images
   hs-source-dirs:
       library
   ghc-options: -Wall -Wcompat
