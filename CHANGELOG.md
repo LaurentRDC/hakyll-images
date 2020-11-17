@@ -1,5 +1,9 @@
 # Change log
 
+## Release 1.0.0
+
+* Updated dependency bounds.
+
 ## Release 0.4.4
 
 * Added the `imageMetadata` compiler, to extract metadata from images.
