@@ -1,5 +1,9 @@
 # Change log
 
+## Release 1.0.1
+
+* The module `Hakyll.Images.Metadata` is now exposed (#5).
+
 ## Release 1.0.0
 
 * Updated dependency bounds.
