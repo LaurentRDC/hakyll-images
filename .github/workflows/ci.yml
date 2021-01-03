@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build-and-test:
+    if: contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Haskell toolchain
+      uses: haskell/actions/setup@v1
+      with:
+        enable-stack: true
+        stack-version: 'latest'
+
+    - uses: actions/cache@v2
+      name: Cache Haskell build artifacts
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-${{ hashFiles('stack.*') }}
+
+    - name: Build 
+      run: stack test --no-run-tests --ghc-options=-Werror
+    
+    - name: Unit tests
+      run: stack test 
