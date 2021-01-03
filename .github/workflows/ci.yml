@@ -29,7 +29,7 @@ jobs:
       name: Cache Haskell build artifacts
       with:
         path: ~/.stack
-        key: ${{ runner.os }}-${{ hashFiles('stack.*') }}
+        key: ${{ runner.os }}-v2-${{ hashFiles('stack.*') }}
 
     - name: Build 
       run: stack test --no-run-tests --ghc-options=-Werror
