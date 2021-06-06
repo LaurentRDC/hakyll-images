@@ -1,5 +1,9 @@
 # Change log
 
+## Release 1.0.2
+
+* Releases are now automatically uploaded via Github Actions
+
 ## Release 1.0.1
 
 * The module `Hakyll.Images.Metadata` is now exposed (#5).

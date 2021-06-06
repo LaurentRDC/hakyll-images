@@ -19,11 +19,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Setup Haskell toolchain
-      uses: haskell/actions/setup@v1
-      with:
-        enable-stack: true
-        stack-version: 'latest'
+    # Stack 2.7.1 is not able to install ghc 9.0.1 alongside chocolatey's GHC
+    - name: Remove hosted GHC9
+      if: runner.os == 'Windows'
+      run:
+        choco uninstall ghc --yes
 
     - uses: actions/cache@v2
       name: Cache Haskell build artifacts
@@ -36,3 +36,22 @@ jobs:
     
     - name: Unit tests
       run: stack test 
+
+  release:
+    needs: [build-and-test]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Create release description
+      run: |
+        python release-description.py CHANGELOG.md > description.md
+        cat description.md
+
+    - name: Create release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        body_path: description.md
