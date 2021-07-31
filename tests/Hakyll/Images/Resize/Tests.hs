@@ -25,6 +25,13 @@ testJpg = do
     Left _ -> error "Could not decode test picture piccolo.jpg"
     Right im -> return im
 
+testGif :: IO DynamicImage
+testGif = do
+  img <- decodeGif <$> B.readFile "tests/data/donkey.gif"
+  case img of
+    Left _ -> error "Could not decode test picture donkey.gif"
+    Right im -> return im
+
 fromAssertions ::
   -- | Name
   String ->
@@ -36,9 +43,22 @@ fromAssertions name =
   zipWith testCase [printf "[%2d] %s" n name | n <- [1 :: Int ..]]
 
 -- Test that the rescaled image is of the appropriate scale
-testResize :: Assertion
-testResize = do
+testResizeJpg :: Assertion
+testResizeJpg = do
   image <- testJpg
+  let scaledImage = resize 48 64 image
+      converted = convertRGBA8 scaledImage
+      (width, height) =
+        ( imageWidth converted,
+          imageHeight converted
+        )
+  assertEqual "Image width was not resized properly" width 48
+  assertEqual "Image height was not resized properly" height 64
+
+-- Test that the rescaled image is of the appropriate scale
+testResizeGif :: Assertion
+testResizeGif = do
+  image <- testGif
   let scaledImage = resize 48 64 image
       converted = convertRGBA8 scaledImage
       (width, height) =
@@ -102,5 +122,5 @@ tests =
           [testEnsureFit],
         fromAssertions
           "resize"
-          [testResize]
+          [testResizeJpg, testResizeGif]
       ]

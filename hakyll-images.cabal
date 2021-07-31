@@ -1,7 +1,7 @@
 cabal-version: 2.2
 
 name:           hakyll-images
-version:        1.0.2
+version:        1.1.0
 synopsis:       Hakyll utilities to work with images
 description:    hakyll-images is an add-on to the hakyll package. It adds utilities to work with images, including JPEG compression.
 category:       Web
@@ -19,6 +19,7 @@ extra-source-files:
     stack.yaml
 data-files:
     tests/data/piccolo.jpg
+    tests/data/donkey.gif
 
 source-repository head
   type: git

@@ -51,6 +51,13 @@ packages:
   original:
     hackage: time-1.11.1.2@sha256:a957467595420495c2dd440d9efa1f58c62277cf9438c7e7a515d7a4c65571ec,6287
 - completed:
+    hackage: unix-2.7.2.2@sha256:ddb8fc5d5eede81dfad7846eceb65267fe4cf8b4f324bc74542f694a32335ef2,3496
+    pantry-tree:
+      size: 3536
+      sha256: c40c15db09b6af866110699f7aa517e98dbcbc7dc339c1443fbcfbf5c4c4b28e
+  original:
+    hackage: unix-2.7.2.2@sha256:ddb8fc5d5eede81dfad7846eceb65267fe4cf8b4f324bc74542f694a32335ef2,3496
+- completed:
     hackage: template-haskell-2.17.0.0@sha256:5a7c40bddd235aaf5d58632a63758bc0b5ebf98232d8dea7294b5ca5226ca577,2152
     pantry-tree:
       size: 920

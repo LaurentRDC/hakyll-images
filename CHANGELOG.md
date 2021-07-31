@@ -1,7 +1,8 @@
 # Change log
 
-## Release 1.0.2
+## Release 1.1.0
 
+* Added support for GIFs (#9).
 * Releases are now automatically uploaded via Github Actions
 
 ## Release 1.0.1
