@@ -38,6 +38,7 @@ data ImageFormat
   | Png
   | Bitmap
   | Tiff
+  | Gif
   deriving (Eq, Generic)
 
 -- Automatic derivation of Binary instances requires Generic
@@ -89,6 +90,7 @@ fromExt ext = fromExt' $ toLower <$> ext
     fromExt' ".bmp" = Bitmap
     fromExt' ".tif" = Tiff
     fromExt' ".tiff" = Tiff
+    fromExt' ".gif" = Gif
     fromExt' ext' = error $ "Unsupported format: " <> ext'
 
 -- Encode images based on file extension
@@ -97,3 +99,4 @@ encode Jpeg im = Image Jpeg $ (toStrict . imageToJpg 100) im
 encode Png im = Image Png $ (toStrict . imageToPng) im
 encode Bitmap im = Image Bitmap $ (toStrict . imageToBitmap) im
 encode Tiff im = Image Tiff $ (toStrict . imageToTiff) im
+encode Gif im = Image Gif $ (toStrict . either (const $ error "Could not parse gif") id . imageToGif) im
