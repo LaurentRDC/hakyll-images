@@ -26,10 +26,18 @@ jobs:
         choco uninstall ghc --yes
 
     - uses: actions/cache@v2
-      name: Cache Haskell build artifacts
+      name: Cache Haskell build artifacts [Linux/MacOS]
+      if: matrix.os != 'windows-latest'
       with:
         path: ~/.stack
-        key: ${{ runner.os }}-v2-${{ hashFiles('stack.*') }}
+        key: ${{ runner.os }}-${{ hashFiles('stack.*') }}
+
+    - uses: actions/cache@v2
+      name: Cache Haskell build artifacts [Windows]
+      if: matrix.os == 'windows-latest'
+      with:
+        path: C:\Users\runneradmin\AppData\Roaming\stack\
+        key: ${{ runner.os }}-${{ hashFiles('stack.*') }}
 
     - name: Build 
       run: stack test --no-run-tests --ghc-options=-Werror
