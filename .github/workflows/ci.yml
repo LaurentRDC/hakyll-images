@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        build_opts: "--constraint="hakyll -usepandoc -previewserver -watchserver" --allow-newer"
+        build_opts: ['--constraint="hakyll -usepandoc -previewserver -watchserver" --allow-newer --disable-optimization']
 
     runs-on: ${{ matrix.os }}
 
@@ -48,11 +48,11 @@ jobs:
         path: |
           dist-newstyle
           ${{ steps.setup-haskell.outputs.cabal-store }}
-        key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-cabal-install-v2
+        key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-cabal-install
 
     - name: Build hakyll-images
       run: |
-        cabal build ${{ matrix.build_opts }}
+        cabal build --enable-tests ${{ matrix.build_opts }}
     
     - name: Unit tests
       run: cabal test ${{ matrix.build_opts }} --test-show-details=always
