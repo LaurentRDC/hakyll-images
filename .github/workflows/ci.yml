@@ -1,5 +1,9 @@
 name: CI
 
+defaults:
+  run:
+    shell: bash
+
 on:
   push:
     branches: [master]
@@ -13,37 +17,45 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        build_opts: "--constraint="hakyll -usepandoc -previewserver -watchserver" --allow-newer"
 
     runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
 
-    # Stack 2.7.1 is not able to install ghc 9.0.1 alongside chocolatey's GHC
-    - name: Remove hosted GHC9
-      if: runner.os == 'Windows'
-      run:
-        choco uninstall ghc --yes
-
-    - uses: actions/cache@v2
-      name: Cache Haskell build artifacts [Linux/MacOS]
-      if: matrix.os != 'windows-latest'
+    - name: Install cabal/ghc
+      uses: haskell/actions/setup@v1
+      id: setup-haskell
       with:
-        path: ~/.stack
-        key: ${{ runner.os }}-${{ hashFiles('stack.*') }}
+        ghc-version: '9.0.1'
+        cabal-version: '3.4.0.0'
 
-    - uses: actions/cache@v2
-      name: Cache Haskell build artifacts [Windows]
-      if: matrix.os == 'windows-latest'
+    - name: Set PATH for cabal-installed executables
+      run: |
+        if [[ "${{ runner.os }}" == "Windows" ]]; then
+          echo "$HOME\AppData\Roaming\cabal\bin" >> $GITHUB_PATH
+        else
+          echo "$HOME/.cabal/bin" >> $GITHUB_PATH
+        fi
+    
+    - name: Cabal freeze
+      run: cabal freeze ${{ matrix.build_opts }}
+        
+    - name: Cache cabal work
+      uses: actions/cache@v2
       with:
-        path: C:\Users\runneradmin\AppData\Roaming\stack\
-        key: ${{ runner.os }}-${{ hashFiles('stack.*') }}
+        path: |
+          dist-newstyle
+          ${{ steps.setup-haskell.outputs.cabal-store }}
+        key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-cabal-install-v2
 
-    - name: Build 
-      run: stack test --no-run-tests --ghc-options=-Werror
+    - name: Build hakyll-images
+      run: |
+        cabal build ${{ matrix.build_opts }}
     
     - name: Unit tests
-      run: stack test 
+      run: cabal test ${{ matrix.build_opts }} --test-show-details=always
 
   release:
     needs: [build-and-test]
