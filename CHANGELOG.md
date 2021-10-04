@@ -1,5 +1,9 @@
 # Change log
 
+## Release 1.1.1
+
+* Updated the test suite to support `Hakyll.Core.Runtime.RunMode` (added in hakyll 4.15) (#10).
+
 ## Release 1.1.0
 
 * Added support for GIFs (#9).
