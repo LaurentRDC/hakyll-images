@@ -16,7 +16,6 @@ extra-source-files:
     CHANGELOG.md
     LICENSE.md
     README.md
-    stack.yaml
 data-files:
     tests/data/piccolo.jpg
     tests/data/donkey.gif
