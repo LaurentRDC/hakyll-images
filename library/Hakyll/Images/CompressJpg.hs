@@ -1,3 +1,4 @@
+{-# LANGUAGE GeneralisedNewtypeDeriving #-}
 -- |
 -- Module      : Hakyll.Images.CompressJpg
 -- Description : Hakyll compiler to compress Jpeg images
@@ -47,27 +48,41 @@ import Hakyll.Images.Common
     format,
     image,
   )
+import Numeric.Natural (Natural)
+
 
 -- | Jpeg encoding quality, from 0 (lower quality) to 100 (best quality).
-type JpgQuality = Int
+-- @since 1.2.0
+newtype JpgQuality = JpgQuality Natural
+  deriving (Num, Eq, Enum, Ord, Real, Integral)
+
+
+-- | @JpgQuality@ smart constructor. Ensures that @JpgQuality@ is always
+-- in the interval [0, 100]. Numbers outside this range will result in either
+-- a quality of 0 or 100.
+--
+-- @since 1.2.0
+mkJpgQuality :: Integral a => a -> JpgQuality
+mkJpgQuality q | q < 0     = JpgQuality 0
+               | q > 100   = JpgQuality 100
+               | otherwise = JpgQuality (fromIntegral q)
+
 
 -- | Compress a JPG bytestring to a certain quality setting.
 -- The quality should be between 0 (lowest quality) and 100 (best quality).
--- An error is raised if the image cannot be decoded, or if the
--- encoding quality is out-of-bounds
-compressJpg :: JpgQuality -> Image -> Image
-compressJpg quality src =
-  if (format src) /= Jpeg
-    then error $ "Image is not a JPEG."
+-- An error is raised if the image cannot be decoded.
+compressJpg :: Integral a => a -> Image -> Image
+compressJpg quality' src =
+  if format src /= Jpeg
+    then error "Image is not a JPEG."
     else case decodeJpeg $ image src of
-      Left _ -> error $ "Loading the image failed."
-      Right dynImage ->
-        if (quality < 0 || quality > 100)
-          then error $ "JPEG encoding quality should be between 0 and 100."
-          else Image Jpeg $ (toStrict $ imageToJpg quality dynImage)
+      Left _ -> error "Loading the image failed."
+      Right dynImage -> Image Jpeg $ toStrict (imageToJpg (fromIntegral quality) dynImage)
+  where quality = mkJpgQuality quality'
 
 -- | Compiler that compresses a JPG image to a certain quality setting.
 -- The quality should be between 0 (lowest quality) and 100 (best quality).
+-- Values outside of this range will be normalized to the interval [0, 100].
 -- An error is raised if the image cannot be decoded.
 --
 -- @
@@ -76,5 +91,5 @@ compressJpg quality src =
 --     compile $ loadImage
 --         >>= compressJpgCompiler 50
 -- @
-compressJpgCompiler :: JpgQuality -> Item Image -> Compiler (Item Image)
+compressJpgCompiler :: Integral a => a -> Item Image -> Compiler (Item Image)
 compressJpgCompiler quality = return . fmap (compressJpg quality)

@@ -64,18 +64,15 @@ case1 = do
       route idRoute
       compile $
         loadImage
-          >>= compressJpgCompiler 50
+          >>= compressJpgCompiler (50::Int)
 
   _ <-
     assertBool "Image was not written"
-      <$> (doesFileExist $ destinationDirectory testConfiguration </> "piccolo.jpg")
+      <$> doesFileExist ( destinationDirectory testConfiguration </> "piccolo.jpg")
 
   cleanTestEnv
 
 --------------------------------------------------------------------------------
 tests :: TestTree
 tests =
-  testGroup "Hakyll.Images.Common.Tests" $
-    concat
-      [ fromAssertions "run" [case1]
-      ]
+  testGroup "Hakyll.Images.Common.Tests" $ fromAssertions "run" [case1]

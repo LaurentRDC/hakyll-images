@@ -8,16 +8,15 @@ where
 
 --------------------------------------------------------------------------------
 
-import Control.Exception (ErrorCall, catch, evaluate)
 import qualified Data.ByteString as B
-import Hakyll.Images.Common
-import Hakyll.Images.CompressJpg
+import Hakyll.Images.Common ( Image(Image, image), ImageFormat(Jpeg) )
+import Hakyll.Images.CompressJpg ( compressJpg )
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.HUnit (Assertion, assertBool, assertFailure, testCase)
+import Test.Tasty.HUnit (Assertion, assertBool, testCase)
 import Text.Printf (printf)
 
 testJpg :: IO Image
-testJpg = Image Jpeg <$> (B.readFile "tests/data/piccolo.jpg")
+testJpg = Image Jpeg <$> B.readFile "tests/data/piccolo.jpg"
 
 fromAssertions ::
   -- | Name
@@ -35,51 +34,37 @@ testCompressionFromImage :: Assertion
 testCompressionFromImage = do
   im <- testJpg
   let initialSize = (B.length . image) im
-      finalSize = (B.length . image . compressJpg 25) im
+      finalSize = (B.length . image . compressJpg (25::Int)) im
 
   assertBool "Image was not compressed" (initialSize > finalSize)
 
--- Test that specifying a JPG encoding below 0 will fail
+-- Test that specifying a JPG encoding below 0 will not fail
 testJpgEncodingOutOfLowerBound :: Assertion
 testJpgEncodingOutOfLowerBound = do
   im <- testJpg
-  -- Catching exceptions is an idea from here:
-  -- https://stackoverflow.com/questions/46330592/is-it-possible-to-assert-an-error-case-in-hunit
-  -- Since compressJpg is a "pure" function, we need to evaluate it in an IO context
-  -- to catch errors.
-  errored <- catch (evaluate (compressJpg (-10) im) >> pure False) handler
-  if errored
-    then pure ()
-    else assertFailure "did not catch expected error"
-  where
-    handler :: ErrorCall -> IO Bool
-    handler _ = pure True
+  
+  let compressedSize = (B.length . image . compressJpg (-10 :: Int)) im
+      expectedSize = (B.length . image . compressJpg (0 :: Int)) im
+
+  assertBool "Out-of-boumds JpgQuality was not handled properly" (expectedSize == compressedSize)
 
 -- Test that specifying a JPG encoding above 100 will fail
 testJpgEncodingOutOfUpperBound :: Assertion
 testJpgEncodingOutOfUpperBound = do
   im <- testJpg
-  -- Catching exceptions is an idea from here:
-  -- https://stackoverflow.com/questions/46330592/is-it-possible-to-assert-an-error-case-in-hunit
-  -- Since compressJpg is a "pure" function, we need to evaluate it in an IO context
-  -- to catch errors.
-  errored <- catch (evaluate (compressJpg 111 im) >> pure False) handler
-  if errored
-    then pure ()
-    else assertFailure "did not catch expected error"
-  where
-    handler :: ErrorCall -> IO Bool
-    handler _ = pure True
+  
+  let compressedSize = (B.length . image . compressJpg (150 :: Int)) im
+      expectedSize = (B.length . image . compressJpg (100 :: Int)) im
+
+  assertBool "Out-of-boumds JpgQuality was not handled properly" (expectedSize == compressedSize)
 
 --------------------------------------------------------------------------------
 tests :: TestTree
 tests =
   testGroup "Hakyll.Images.CompressJpg.Tests" $
-    concat
-      [ fromAssertions
-          "compressJpg"
-          [ testCompressionFromImage,
-            testJpgEncodingOutOfLowerBound,
-            testJpgEncodingOutOfUpperBound
-          ]
-      ]
+    fromAssertions
+        "compressJpg"
+        [ testCompressionFromImage,
+          testJpgEncodingOutOfLowerBound,
+          testJpgEncodingOutOfUpperBound
+        ]

@@ -1,5 +1,9 @@
 # Change log
 
+## Release 1.2.0
+
+* Made `JpgQuality` an opaque constructor, so that we can normalize the input to the range [0, 100].
+
 ## Release 1.1.1
 
 * Updated the test suite to support `Hakyll.Core.Runtime.RunMode` (added in hakyll 4.15) (#10).
