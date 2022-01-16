@@ -72,7 +72,7 @@ decodeImage' im = case decodeImage im of
 -- In the process, an image is converted to RGBA8. Therefore, some information
 -- loss may occur.
 resize :: Width -> Height -> DynamicImage -> DynamicImage
-resize w h = ImageRGBA8 . (scaleBilinear w h) . convertRGBA8
+resize w h = ImageRGBA8 . scaleBilinear w h . convertRGBA8
 
 -- | Scale an image to a size that will fit in the specified width and height,
 -- while preserving aspect ratio. Images might be scaled up as well.
@@ -139,7 +139,7 @@ ensureFit w h = scale' w h False
 resizeImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 resizeImageCompiler w h item =
   let fmt = (format . itemBody) item
-   in return $ (encode fmt . resize w h . decodeImage' . image) <$> item
+   in return $ encode fmt . resize w h . decodeImage' . image <$> item
 
 -- | Compiler that rescales images to fit within dimensions. Aspect ratio
 -- will be preserved. Images might be scaled up as well.
@@ -156,7 +156,7 @@ resizeImageCompiler w h item =
 scaleImageCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 scaleImageCompiler w h item =
   let fmt = (format . itemBody) item
-   in return $ (encode fmt . scale w h . decodeImage' . image) <$> item
+   in return $ encode fmt . scale w h . decodeImage' . image <$> item
 
 -- | Compiler that ensures images will fit within dimensions. Images might
 -- be scaled down, but never up.  Aspect ratio will be preserved.
@@ -173,4 +173,4 @@ scaleImageCompiler w h item =
 ensureFitCompiler :: Width -> Height -> Item Image -> Compiler (Item Image)
 ensureFitCompiler w h item =
   let fmt = (format . itemBody) item
-   in return $ (encode fmt . ensureFit w h . decodeImage' . image) <$> item
+   in return $ encode fmt . ensureFit w h . decodeImage' . image <$> item

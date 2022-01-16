@@ -29,7 +29,7 @@ fromAssertions name =
   zipWith testCase [printf "[%2d] %s" n name | n <- [1 :: Int ..]]
 
 testJpg :: IO Image
-testJpg = Image Jpeg <$> (B.readFile "tests/data/piccolo.jpg")
+testJpg = Image Jpeg <$> B.readFile "tests/data/piccolo.jpg"
 
 testMetadata :: Assertion
 testMetadata = do
@@ -45,7 +45,4 @@ testMetadata = do
 
 tests :: TestTree
 tests =
-  testGroup "Hakyll.Images.Metadata.Tests" $
-    concat
-      [ fromAssertions "metadata" [testMetadata]
-      ]
+  testGroup "Hakyll.Images.Metadata.Tests" $ fromAssertions "metadata" [testMetadata]

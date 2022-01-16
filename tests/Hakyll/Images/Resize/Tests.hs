@@ -101,9 +101,9 @@ testScalePreservesAspectRatio :: Assertion
 testScalePreservesAspectRatio = do
   image <- testJpg
 
-  let initialAspectRatio = (imageWidth $ convertRGBA8 image) % (imageHeight $ convertRGBA8 image)
+  let initialAspectRatio = imageWidth (convertRGBA8 image) % imageHeight (convertRGBA8 image)
       scaledImage = scale 600 400 image
-      finalAspectRatio = (imageWidth $ convertRGBA8 scaledImage) % (imageHeight $ convertRGBA8 scaledImage)
+      finalAspectRatio = imageWidth (convertRGBA8 scaledImage) % imageHeight (convertRGBA8 scaledImage)
 
   assertApproxEqual "Aspect ratio was not preserved" 0.02 initialAspectRatio finalAspectRatio
 

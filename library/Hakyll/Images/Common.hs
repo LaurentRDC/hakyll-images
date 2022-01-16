@@ -1,8 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE TypeSynonymInstances #-}
-
 -- |
 -- Module      : Hakyll.Images.Common
 -- Description : Types and utilities for Hakyll.Images
@@ -25,6 +23,7 @@ import Data.Binary (Binary (..))
 import Data.ByteString (ByteString)
 import Data.ByteString.Lazy (toStrict)
 import Data.Char (toLower)
+import Data.Either (fromRight)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
 import Hakyll.Core.Compiler (Compiler, getResourceLBS, getUnderlyingExtension)
@@ -74,7 +73,7 @@ loadImage :: Compiler (Item Image)
 loadImage = do
   content <- fmap toStrict <$> getResourceLBS
   fmt <- fromExt <$> getUnderlyingExtension
-  return $ (Image fmt) <$> content
+  return $ Image fmt <$> content
 
 -- | Translation between file extensions and image formats.
 -- It is important to keep track of image formats because Hakyll
@@ -99,4 +98,4 @@ encode Jpeg im = Image Jpeg $ (toStrict . imageToJpg 100) im
 encode Png im = Image Png $ (toStrict . imageToPng) im
 encode Bitmap im = Image Bitmap $ (toStrict . imageToBitmap) im
 encode Tiff im = Image Tiff $ (toStrict . imageToTiff) im
-encode Gif im = Image Gif $ (toStrict . either (const $ error "Could not parse gif") id . imageToGif) im
+encode Gif im = Image Gif $ (toStrict . fromRight (error "Could not parse gif") . imageToGif) im
