@@ -2,7 +2,7 @@
 -- |
 -- Module      : Hakyll.Images.CompressJpg
 -- Description : Hakyll compiler to compress Jpeg images
--- Copyright   : (c) Laurent P René de Cotret, 2019
+-- Copyright   : (c) Laurent P René de Cotret, 2019 - present
 -- License     : BSD3
 -- Maintainer  : laurent.decotret@outlook.com
 -- Stability   : unstable

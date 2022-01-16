@@ -1,7 +1,7 @@
 -- |
 -- Module      : Hakyll.Images.Resize
 -- Description : Hakyll compiler to resize images
--- Copyright   : (c) Laurent P René de Cotret, 2019
+-- Copyright   : (c) Laurent P René de Cotret, 2019 - present
 -- License     : BSD3
 -- Maintainer  : laurent.decotret@outlook.com
 -- Stability   : unstable
