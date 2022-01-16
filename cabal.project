@@ -1,0 +1,7 @@
+
+packages: *.cabal
+
+optimization: 0
+jobs: $ncpus
+
+constraints: hakyll -usepandoc -previewserver -watchserver
