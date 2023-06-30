@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        build_opts: ['--constraint="hakyll -usepandoc -previewserver -watchserver" --allow-newer --disable-optimization']
+        build_opts: ['--constraint="hakyll -usepandoc -previewserver -watchserver" --disable-optimization']
 
     runs-on: ${{ matrix.os }}
 
