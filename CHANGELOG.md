@@ -1,5 +1,9 @@
 # Change log
 
+## Release 1.2.1
+
+* Fixed an issue where compressing certain JPEGs would also rotate them, due to metadata being stripped (#11).
+
 ## Release 1.2.0
 
 * Made `JpgQuality` an opaque constructor, so that we can normalize the input to the range [0, 100].
