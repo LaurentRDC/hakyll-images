@@ -16,34 +16,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
         build_opts: ['--constraint="hakyll -usepandoc -previewserver -watchserver" --disable-optimization']
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install cabal/ghc
-      uses: haskell/actions/setup@v2
+      uses: haskell-actions/setup@v2
       id: setup-haskell
       with:
-        ghc-version: 'latest'
-        cabal-version: 'latest'
-
-    - name: Set PATH for cabal-installed executables
-      run: |
-        if [[ "${{ runner.os }}" == "Windows" ]]; then
-          echo "$HOME\AppData\Roaming\cabal\bin" >> $GITHUB_PATH
-        else
-          echo "$HOME/.cabal/bin" >> $GITHUB_PATH
-        fi
+        ghc-version: '9.8.2'
+        cabal-version: '3.10.3.0'
     
     - name: Cabal freeze
       run: cabal freeze ${{ matrix.build_opts }}
         
     - name: Cache cabal work
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: |
           dist-newstyle
@@ -57,21 +48,3 @@ jobs:
     - name: Unit tests
       run: cabal test ${{ matrix.build_opts }} --test-show-details=always
 
-  release:
-    needs: [build-and-test]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    
-    - name: Create release description
-      run: |
-        python release-description.py CHANGELOG.md > description.md
-        cat description.md
-
-    - name: Create release
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        body_path: description.md
