@@ -1,5 +1,9 @@
 # Change log
 
+## Release 1.2.2
+
+* Minor documentation improvements
+
 ## Release 1.2.1
 
 * Fixed an issue where compressing certain JPEGs would also rotate them, due to metadata being stripped (#11).

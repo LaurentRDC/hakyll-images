@@ -25,14 +25,12 @@
 --         -- Resize all profile pictures with .png extensions to 64x48
 --         match "profiles/**.png" $ do
 --             route idRoute
---             compile $ loadImage
---                 >>= resizeImageCompiler 64 48
+--             compile $ loadImage >>= resizeImageCompiler 64 48
 --
 --         -- Scale images to fit within a 600x400 box
 --         match "images/**" $ do
 --             route idRoute
---             compile $ loadImage
---                 >>= scaleImageCompiler 600 400
+--             compile $ loadImage >>= scaleImageCompiler 600 400
 --
 --         (... omitted ...)
 -- @
@@ -130,8 +128,7 @@ ensureFit w h = scale' w h False
 -- @
 -- match "*.png" $ do
 --     route idRoute
---     compile $ loadImage
---         >>= resizeImageCompiler 48 64
+--     compile $ loadImage >>= resizeImageCompiler 48 64
 -- @
 --
 -- Note that in the resizing process, images will be converted to RGBA8.
@@ -147,8 +144,7 @@ resizeImageCompiler w h item =
 -- @
 -- match "*.tiff" $ do
 --     route idRoute
---     compile $ loadImage
---         >>= scaleImageCompiler 48 64
+--     compile $ loadImage >>= scaleImageCompiler 48 64
 -- @
 --
 -- Note that in the resizing process, images will be converted to RGBA8.
@@ -164,8 +160,7 @@ scaleImageCompiler w h item =
 -- @
 -- match "*.tiff" $ do
 --     route idRoute
---     compile $ loadImage
---         >>= ensureFitCompiler 48 64
+--     compile $ loadImage >>= ensureFitCompiler 48 64
 -- @
 --
 -- Note that in the resizing process, images will be converted to RGBA8.

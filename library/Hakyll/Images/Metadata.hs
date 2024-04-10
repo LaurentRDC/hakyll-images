@@ -32,8 +32,7 @@ metadata im = either error snd (decodeImageWithMetadata (image im))
 -- match "*.jpg" $ do
 --     route idRoute
 --     compile $ do
---         im <- loadImage
---         meta <- imageMetadata
+--         meta <- imageMetadata =<< loadImage
 --         doSomethingWithMetadata meta
 --         ...
 -- @

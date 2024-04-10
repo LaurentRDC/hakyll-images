@@ -128,8 +128,7 @@ encodeJpeg qual meta img@Picture.Image{..}
 -- @
 -- match "*.jpg" $ do
 --     route idRoute
---     compile $ loadImage
---         >>= compressJpgCompiler 50
+--     compile $ loadImage >>= compressJpgCompiler 50
 -- @
 compressJpgCompiler :: Integral a => a -> Item Image -> Compiler (Item Image)
 compressJpgCompiler quality = return . fmap (compressJpg quality)

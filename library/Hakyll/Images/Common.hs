@@ -66,8 +66,7 @@ instance Binary Image where
 -- @
 -- match "*.jpg" $ do
 --     route idRoute
---     compile $ loadImage
---         >>= compressJpgCompiler 50
+--     compile $ loadImage >>= compressJpgCompiler 50
 -- @
 loadImage :: Compiler (Item Image)
 loadImage = do
