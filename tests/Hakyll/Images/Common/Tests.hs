@@ -14,7 +14,7 @@ import Hakyll
 import qualified Hakyll.Core.Logger as L
 import Hakyll.Core.Rules.Internal (RuleSet)
 import Hakyll.Core.Runtime
-import Hakyll.Images
+import Hakyll.Images ( loadImage, compressJpgCompiler )
 import System.Directory (doesFileExist)
 import System.Exit      (ExitCode)
 import System.FilePath ((</>))

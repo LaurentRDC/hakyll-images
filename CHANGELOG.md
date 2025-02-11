@@ -1,5 +1,13 @@
 # Change log
 
+## Release 1.3.0
+
+* Fixed handling of EXIF orientation of metadata, which was previously thought to be fixed (#11).
+  The EXIF orientation tag, if it exists, will now persist through all compilers provided
+  by `hakyll-images`.
+* Removed the `compressJpg` function, which was only used for testing. `compressJpgCompiler` is still here of course.
+* Refactoring of the test suite, which led to internals being exposed in `Hakyll.Images.Internal`.
+
 ## Release 1.2.2
 
 * Minor documentation improvements

@@ -58,7 +58,6 @@ module Hakyll.Images
     module Hakyll.Images.Metadata,
     -- Jpg compression
     JpgQuality,
-    compressJpg,
     compressJpgCompiler,
     -- Image scaling
     Width,

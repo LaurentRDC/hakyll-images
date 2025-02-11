@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
+
 -- |
 -- Module      : Hakyll.Images.Common
 -- Description : Types and utilities for Hakyll.Images
@@ -11,14 +12,28 @@
 -- Portability : portable
 module Hakyll.Images.Common
   ( Image (..),
+    withImageContent,
+    ImageContent,
+    decodeContent,
+    WithMetadata (..),
     ImageFormat (..),
     loadImage,
     encode,
   )
 where
 
+import Codec.Picture (decodeImageWithMetadata)
+import Codec.Picture.Metadata (Metadatas)
+import qualified Codec.Picture.Metadata as Meta
+import qualified Codec.Picture.Metadata.Exif as Meta
 import Codec.Picture.Saving
+import Codec.Picture.Saving.WithMetadata
+  ( imageToBitmapWithMetadata,
+    imageToJpgWithMetadata,
+    imageToPngWithMetadata,
+  )
 import Codec.Picture.Types (DynamicImage)
+import Data.Bifunctor (second)
 import Data.Binary (Binary (..))
 import Data.ByteString (ByteString)
 import Data.ByteString.Lazy (toStrict)
@@ -44,10 +59,38 @@ data ImageFormat
 instance Binary ImageFormat
 
 data Image = Image
-  { format :: ImageFormat,
-    image :: ByteString
+  { format :: !ImageFormat,
+    image :: !ByteString
   }
   deriving (Typeable)
+
+-- Implementation note
+-- We need to keep the content of an image as a bytestring, as
+-- much as possible, because Hakyll's Items must be serializable.
+
+data WithMetadata a
+  = MkWithMetadata
+  { getData :: !a,
+    getMetadata :: !Metadatas
+  }
+
+type ImageContent = WithMetadata DynamicImage
+
+decodeContent :: ByteString -> WithMetadata DynamicImage
+decodeContent im = case decodeImageWithMetadata im of
+  Left msg -> error msg
+  Right content -> uncurry MkWithMetadata (second pruneMetadatas content)
+    where
+      -- \| Prune metadata to only keep tags which are absolutely necessary
+      -- (of which there are very few).
+      pruneMetadatas :: Metadatas -> Metadatas
+      pruneMetadatas meta =
+        foldMap (\(k, v) -> Meta.singleton (Meta.Exif k) v) $
+          filter (\(k, _) -> k == Meta.TagOrientation) $
+            Meta.extractExifMetas meta
+
+instance Functor WithMetadata where
+  fmap f (MkWithMetadata a m) = (MkWithMetadata (f a) m)
 
 -- When writing to disk, we ignore the image format.
 -- Trusting users to route correctly.
@@ -65,8 +108,8 @@ instance Binary Image where
 --
 -- @
 -- match "*.jpg" $ do
---     route idRoute
---     compile $ loadImage >>= compressJpgCompiler 50
+--    route idRoute
+--    compile $ loadImage >>= compressJpgCompiler 50
 -- @
 loadImage :: Compiler (Item Image)
 loadImage = do
@@ -92,9 +135,22 @@ fromExt ext = fromExt' $ toLower <$> ext
     fromExt' ext' = error $ "Unsupported format: " <> ext'
 
 -- Encode images based on file extension
-encode :: ImageFormat -> DynamicImage -> Image
-encode Jpeg im = Image Jpeg $ (toStrict . imageToJpg 100) im
-encode Png im = Image Png $ (toStrict . imageToPng) im
-encode Bitmap im = Image Bitmap $ (toStrict . imageToBitmap) im
-encode Tiff im = Image Tiff $ (toStrict . imageToTiff) im
-encode Gif im = Image Gif $ (toStrict . fromRight (error "Could not parse gif") . imageToGif) im
+--
+-- Unfortunately, the upstream library `JuicyPixels` does not have support
+-- for encoding metadata of some image formats, including `Tiff` and `Gif`.
+encode :: ImageFormat -> ImageContent -> Image
+encode Jpeg (MkWithMetadata im meta) = Image Jpeg $ (toStrict . imageToJpgWithMetadata 100 meta) im
+encode Png (MkWithMetadata im meta) = Image Png $ (toStrict . imageToPngWithMetadata meta) im
+encode Bitmap (MkWithMetadata im meta) = Image Bitmap $ (toStrict . imageToBitmapWithMetadata meta) im
+encode Tiff (MkWithMetadata im _) = Image Tiff $ (toStrict . imageToTiff) im
+encode Gif (MkWithMetadata im _) = Image Gif $ (toStrict . fromRight (error "Could not parse gif") . imageToGif) im
+
+-- | Map over the content of an `Image`, decoded into an `ImageContent`.
+withImageContent ::
+  (ImageContent -> ImageContent) ->
+  -- | Encoder function
+  (ImageFormat -> ImageContent -> Image) ->
+  (Image -> Image)
+withImageContent f encoder (Image fmt bts) =
+  let content = decodeContent bts
+   in encoder fmt $ f content

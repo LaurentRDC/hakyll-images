@@ -12,7 +12,7 @@ where
 import qualified Data.ByteString as B
 import Data.Maybe (fromMaybe)
 import Hakyll.Images
-import Hakyll.Images.Common
+import Hakyll.Images.Internal
 import qualified Hakyll.Images.Metadata as M
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase)

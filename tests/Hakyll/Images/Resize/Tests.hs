@@ -1,36 +1,34 @@
---------------------------------------------------------------------------------
+{-# LANGUAGE OverloadedStrings #-}
+
 module Hakyll.Images.Resize.Tests
   ( tests,
   )
 where
 
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
-
 import Codec.Picture
+  ( convertRGBA8,
+    decodeJpeg,
+    dynamicMap,
+    imageHeight,
+    imageWidth,
+  )
 import qualified Data.ByteString as B
 import Data.Ratio ((%))
+import Hakyll (Item (Item))
 import Hakyll.Images
+import Hakyll.Images.Internal (Image (Image), ImageContent, WithMetadata (..), decodeContent)
+import Hakyll.Images.Tests.Utils
 import Test.HUnit.Approx (assertApproxEqual)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, assertEqual, testCase)
 import Text.Printf (printf)
 
 -- Original test image "piccolo.jpg" has shape 1170 x 647px
-testJpg :: IO DynamicImage
-testJpg = do
-  img <- decodeJpeg <$> B.readFile "tests/data/piccolo.jpg"
-  case img of
-    Left _ -> error "Could not decode test picture piccolo.jpg"
-    Right im -> return im
+testJpg :: IO ImageContent
+testJpg = decodeContent <$> B.readFile "tests/data/piccolo.jpg"
 
-testGif :: IO DynamicImage
-testGif = do
-  img <- decodeGif <$> B.readFile "tests/data/donkey.gif"
-  case img of
-    Left _ -> error "Could not decode test picture donkey.gif"
-    Right im -> return im
+testGif :: IO ImageContent
+testGif = decodeContent <$> B.readFile "tests/data/donkey.gif"
 
 fromAssertions ::
   -- | Name
@@ -47,7 +45,7 @@ testResizeJpg :: Assertion
 testResizeJpg = do
   image <- testJpg
   let scaledImage = resize 48 64 image
-      converted = convertRGBA8 scaledImage
+      MkWithMetadata converted _ = fmap convertRGBA8 scaledImage
       (width, height) =
         ( imageWidth converted,
           imageHeight converted
@@ -60,7 +58,7 @@ testResizeGif :: Assertion
 testResizeGif = do
   image <- testGif
   let scaledImage = resize 48 64 image
-      converted = convertRGBA8 scaledImage
+      MkWithMetadata converted _ = fmap convertRGBA8 scaledImage
       (width, height) =
         ( imageWidth converted,
           imageHeight converted
@@ -73,7 +71,7 @@ testScale :: Assertion
 testScale = do
   image <- testJpg
   let scaledImage = scale 600 400 image
-      converted = convertRGBA8 scaledImage
+      MkWithMetadata converted _ = fmap convertRGBA8 scaledImage
       (width, height) =
         ( imageWidth converted,
           imageHeight converted
@@ -86,9 +84,9 @@ testScale = do
 testEnsureFit :: Assertion
 testEnsureFit = do
   image <- testJpg
-  let (originalWidth, originalHeight) = (imageWidth . convertRGBA8 $ image, imageHeight . convertRGBA8 $ image)
+  let (originalWidth, originalHeight) = (imageWidth . convertRGBA8 . getData $ image, imageHeight . convertRGBA8 . getData $ image)
       scaledImage = ensureFit 2000 2000 image
-      converted = convertRGBA8 scaledImage
+      MkWithMetadata converted _ = fmap convertRGBA8 scaledImage
       (width, height) =
         ( imageWidth converted,
           imageHeight converted
@@ -101,13 +99,36 @@ testScalePreservesAspectRatio :: Assertion
 testScalePreservesAspectRatio = do
   image <- testJpg
 
-  let initialAspectRatio = imageWidth (convertRGBA8 image) % imageHeight (convertRGBA8 image)
+  let initialAspectRatio = imageWidth (convertRGBA8 $ getData image) % imageHeight (convertRGBA8 $ getData image)
       scaledImage = scale 600 400 image
-      finalAspectRatio = imageWidth (convertRGBA8 scaledImage) % imageHeight (convertRGBA8 scaledImage)
+      finalAspectRatio = imageWidth (convertRGBA8 $ getData scaledImage) % imageHeight (convertRGBA8 $ getData scaledImage)
 
   assertApproxEqual "Aspect ratio was not preserved" 0.02 initialAspectRatio finalAspectRatio
 
---------------------------------------------------------------------------------
+-- Test that issue #11 is fixed
+testJpgInadvertentRotation :: TestTree
+testJpgInadvertentRotation = testCase "resizing a JPEG does not rotate it (issue #11)" $ do
+  Item _ (Image _ raw) <-
+    testCompilerDone "issue11-2.jpg" $ loadImage
+
+  let original = either error id $ decodeJpeg raw
+      initialWidth = dynamicMap imageWidth original
+      initialHeight = dynamicMap imageHeight original
+
+  Item _ (Image _ bts) <-
+    testCompilerDone "issue11-2.jpg" $ loadImage >>= ensureFitCompiler 400 400
+
+  let resized = either error id $ decodeJpeg bts
+      measuredWidth = dynamicMap imageWidth resized
+      measuredHeight = dynamicMap imageHeight resized
+
+  -- The image *appears* to be w=300, h=400,
+  -- but an exif tag that rotates it means that we expect
+  -- the height to be smaller than the width
+  assertBool mempty (initialHeight < initialWidth)
+  -- The same must hold for the resized image
+  assertBool mempty (measuredHeight < measuredWidth)
+
 tests :: TestTree
 tests =
   testGroup "Hakyll.Images.Resize.Tests" $
@@ -119,8 +140,10 @@ tests =
           ],
         fromAssertions
           "ensureFit"
-          [testEnsureFit],
+          [ testEnsureFit
+          ],
         fromAssertions
           "resize"
-          [testResizeJpg, testResizeGif]
+          [testResizeJpg, testResizeGif],
+        [testJpgInadvertentRotation]
       ]
