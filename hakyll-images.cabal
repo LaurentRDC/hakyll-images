@@ -3,7 +3,9 @@ cabal-version: 2.2
 name:           hakyll-images
 version:        1.3.0
 synopsis:       Hakyll utilities to work with images
-description:    hakyll-images is an add-on to the hakyll package. It adds utilities to work with images, including JPEG compression.
+description:    
+  hakyll-images is an add-on to the hakyll package. It adds utilities to work with images, 
+  including resizing and JPEG compression.
 category:       Web
 homepage:       https://github.com/LaurentRDC/hakyll-images#readme
 bug-reports:    https://github.com/LaurentRDC/hakyll-images/issues
@@ -12,7 +14,7 @@ maintainer:     Laurent P. René de Cotret
 license:        BSD-3-Clause
 license-file:   LICENSE.md
 build-type:     Simple
-extra-source-files:
+extra-doc-files:
     CHANGELOG.md
     LICENSE.md
     README.md
@@ -40,13 +42,13 @@ library
       library
   ghc-options: -Wall -Wcompat
   build-depends:
-      JuicyPixels       >= 3   && <4
-    , JuicyPixels-extra >  0.3 && <1
-    , base              >= 4.8 && <5
-    , binary            >= 0.5 && <1
-    , bytestring        >= 0.9 && <1
-    , hakyll            >  4   && <5
-    , vector            >= 0.12
+      JuicyPixels       >= 3    && <4
+    , JuicyPixels-extra >  0.3  && <1
+    , base              >= 4.8  && <5
+    , binary            >= 0.5  && <1
+    , bytestring        >= 0.9  && <1
+    , hakyll            >  4    && <5
+    , vector            >= 0.12 && <0.14
   default-language: Haskell2010
 
 test-suite spec
