@@ -1,4 +1,5 @@
 -- | Test utilities
+{-# LANGUAGE CPP #-}
 module Hakyll.Images.Tests.Utils
   ( testCompiler,
     testCompilerDone,
@@ -23,7 +24,13 @@ testCompiler ::
   IO (CompilerResult a)
 testCompiler underlying compiler = do
   store <- Store.new True $ storeDirectory testConfiguration
+-- https://github.com/jaspervdj/hakyll/pull/1084 introduced an unfortunate
+-- breaking change, which we paper over using CPP
+#if MIN_VERSION_hakyll(4,16,8)
+  (provider,_) <-
+#else
   provider <-
+#endif
     newProvider store (const $ return False) $
       providerDirectory testConfiguration
   logger <- Logger.new Logger.Error
