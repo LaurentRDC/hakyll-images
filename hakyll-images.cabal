@@ -1,7 +1,7 @@
 cabal-version: 2.2
 
 name:           hakyll-images
-version:        1.3.0
+version:        1.3.1
 synopsis:       Hakyll utilities to work with images
 description:    
   hakyll-images is an add-on to the hakyll package. It adds utilities to work with images, 
@@ -47,7 +47,7 @@ library
     , base              >= 4.8  && <5
     , binary            >= 0.5  && <1
     , bytestring        >= 0.9  && <1
-    , hakyll            >  4    && <5
+    , hakyll            >= 4.17 && <4.18
     , vector            >= 0.12 && <0.14
   default-language: Haskell2010
 
@@ -72,7 +72,7 @@ test-suite spec
     , containers
     , directory         >= 1    && <2
     , filepath          >= 1    && <2
-    , hakyll            >= 4    && <5
+    , hakyll
     , hakyll-images
     , tasty             >= 0.11 && <2
     , tasty-hunit       >= 0.9  && <1

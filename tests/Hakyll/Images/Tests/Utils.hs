@@ -23,7 +23,10 @@ testCompiler ::
   IO (CompilerResult a)
 testCompiler underlying compiler = do
   store <- Store.new True $ storeDirectory testConfiguration
-  provider <-
+  -- Note that before hakyll 4.17, `newProvider` returned a different
+  -- structure. To keep things simple, we make the minimum hakyll version
+  -- 4.17.
+  (provider,_) <-
     newProvider store (const $ return False) $
       providerDirectory testConfiguration
   logger <- Logger.new Logger.Error

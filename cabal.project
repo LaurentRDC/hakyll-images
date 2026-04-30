@@ -1,0 +1,4 @@
+packages: hakyll-images.cabal
+
+-- Faster builds
+constraints: hakyll -usepandoc

@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 --------------------------------------------------------------------------------
@@ -21,15 +20,6 @@ import System.FilePath ((</>))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, testCase)
 import Text.Printf (printf)
-
--- RunMode was introduced in Hakyll 4.15
-runCompat :: Configuration -> L.Logger -> Rules a -> IO (ExitCode, RuleSet)
-runCompat = 
-#if MIN_VERSION_hakyll(4,15,0)
-  run RunModeNormal 
-#else
-  run
-#endif
 
 fromAssertions ::
   -- | Name
@@ -59,7 +49,7 @@ cleanTestEnv = do
 case1 :: Assertion
 case1 = do
   logger <- L.new L.Error
-  _ <- runCompat testConfiguration logger $ do
+  _ <- run RunModeNormal testConfiguration logger $ do
     match "*.jpg" $ do
       route idRoute
       compile $

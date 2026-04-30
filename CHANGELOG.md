@@ -1,5 +1,9 @@
 # Change log
 
+## Release 1.3.1
+
+* Fixed an issue where the test suite would not compile with `hakyll-4.16.8.0`+ (#15).
+
 ## Release 1.3.0
 
 * Fixed handling of EXIF orientation of metadata, which was previously thought to be fixed (#11).
