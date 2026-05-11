@@ -59,6 +59,9 @@ module Hakyll.Images
     -- Jpg compression
     JpgQuality,
     compressJpgCompiler,
+    -- Webp compression
+    WebpQuality,
+    compressWebpCompiler,
     -- Image scaling
     Width,
     Height,
@@ -73,5 +76,6 @@ where
 
 import Hakyll.Images.Common
 import Hakyll.Images.CompressJpg
+import Hakyll.Images.CompressWebp
 import Hakyll.Images.Metadata
 import Hakyll.Images.Resize

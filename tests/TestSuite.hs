@@ -10,6 +10,7 @@ where
 
 import qualified Hakyll.Images.Common.Tests
 import qualified Hakyll.Images.CompressJpg.Tests
+import qualified Hakyll.Images.CompressWebp.Tests
 import qualified Hakyll.Images.Metadata.Tests
 import qualified Hakyll.Images.Resize.Tests
 import qualified Hakyll.Images.Tests.Utils
@@ -23,6 +24,7 @@ main = do
       "Hakyll"
       [ Hakyll.Images.Common.Tests.tests,
         Hakyll.Images.CompressJpg.Tests.tests,
+        Hakyll.Images.CompressWebp.Tests.tests,
         Hakyll.Images.Resize.Tests.tests,
         Hakyll.Images.Metadata.Tests.tests
       ]

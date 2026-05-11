@@ -32,6 +32,7 @@ library
   exposed-modules:
       Hakyll.Images
       Hakyll.Images.CompressJpg
+      Hakyll.Images.CompressWebp
       Hakyll.Images.Internal
       Hakyll.Images.Resize
       Hakyll.Images.Metadata
@@ -49,6 +50,7 @@ library
     , bytestring        >= 0.9  && <1
     , hakyll            >= 4.17 && <4.18
     , vector            >= 0.12 && <0.14
+    , webp              >= 0.1  && <0.2
   default-language: Haskell2010
 
 test-suite spec
@@ -57,6 +59,7 @@ test-suite spec
   other-modules:
       Hakyll.Images.Common.Tests
       Hakyll.Images.CompressJpg.Tests
+      Hakyll.Images.CompressWebp.Tests
       Hakyll.Images.Metadata.Tests
       Hakyll.Images.Resize.Tests
       Hakyll.Images.Tests.Utils

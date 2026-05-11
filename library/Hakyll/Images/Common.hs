@@ -31,6 +31,7 @@ import Codec.Picture.Saving.WithMetadata
   ( imageToBitmapWithMetadata,
     imageToJpgWithMetadata,
     imageToPngWithMetadata,
+    imageToWebp,
   )
 import Codec.Picture.Types (DynamicImage)
 import Data.Bifunctor (second)
@@ -53,6 +54,7 @@ data ImageFormat
   | Bitmap
   | Tiff
   | Gif
+  | Webp
   deriving (Eq, Generic)
 
 -- Automatic derivation of Binary instances requires Generic
@@ -144,6 +146,7 @@ encode Png (MkWithMetadata im meta) = Image Png $ (toStrict . imageToPngWithMeta
 encode Bitmap (MkWithMetadata im meta) = Image Bitmap $ (toStrict . imageToBitmapWithMetadata meta) im
 encode Tiff (MkWithMetadata im _) = Image Tiff $ (toStrict . imageToTiff) im
 encode Gif (MkWithMetadata im _) = Image Gif $ (toStrict . fromRight (error "Could not parse gif") . imageToGif) im
+encode Webp (MkWithMetadata im _) = Image Webp $ imageToWebp 100 im
 
 -- | Map over the content of an `Image`, decoded into an `ImageContent`.
 withImageContent ::

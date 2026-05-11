@@ -9,6 +9,7 @@ module Codec.Picture.Saving.WithMetadata
   ( imageToJpgWithMetadata,
     imageToPngWithMetadata,
     imageToBitmapWithMetadata,
+    imageToWebp,
   )
 where
 
@@ -25,16 +26,20 @@ import Codec.Picture.Types
     Pixel8,
     PixelF,
     PixelRGB16,
+    PixelRGBA16,
     PixelRGB8 (..),
     PixelRGBA8,
     PixelRGBF (..),
     dropAlphaLayer,
     pixelMap,
   )
+import qualified Codec.Picture.WebP as WebP
 import Data.Bits (unsafeShiftR)
+import Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as L
 import qualified Data.Vector.Storable as V
 import Data.Word (Word16, Word32, Word8)
+import Foreign.C.Types (CFloat)
 
 componentToLDR :: Float -> Word8
 componentToLDR = truncate . (255 *) . min 1.0 . max 0.0
@@ -162,3 +167,29 @@ imageToBitmapWithMetadata meta (ImageY32 img) = imageToBitmapWithMetadata meta .
 imageToBitmapWithMetadata meta (ImageYA16 img) = imageToBitmapWithMetadata meta . ImageYA8 $ from16to8 img
 imageToBitmapWithMetadata meta (ImageRGB16 img) = imageToBitmapWithMetadata meta . ImageRGB8 $ from16to8 img
 imageToBitmapWithMetadata meta (ImageRGBA16 img) = imageToBitmapWithMetadata meta . ImageRGBA8 $ from16to8 img
+
+-- | This function will try to do anything to encode an image
+-- as WebP, make all color conversion and such. Equivalent
+-- of 'decodeImage' for WebP encoding
+--
+-- This function does not support metadata, but is grouped in
+-- this module to reuse the underlying conversions
+imageToWebp :: CFloat -> DynamicImage -> ByteString
+imageToWebp quality dynImage =
+  let encodeRgb = WebP.encodeRgb8 quality
+      encodeRgba = WebP.encodeRgba8 quality
+   in case dynImage of
+    ImageYCbCr8 img -> encodeRgb $ convertImage img
+    ImageCMYK8 img -> encodeRgb $ convertImage img
+    ImageCMYK16 img -> encodeRgb . from16to8 $ (convertImage img :: Image PixelRGB16)
+    ImageRGB8 img -> encodeRgb img
+    ImageRGBF img -> encodeRgb $ toStandardDef img
+    ImageRGBA8 img -> encodeRgba img
+    ImageY8 img -> encodeRgb $ promoteImage img
+    ImageYF img -> encodeRgb . promoteImage . greyScaleToStandardDef $ img
+    ImageYA8 img -> encodeRgba $ promoteImage img
+    ImageY16 img -> encodeRgb . promoteImage $ (from16to8 img :: Image Pixel8)
+    ImageY32 img -> encodeRgb . promoteImage $ (from32to8 img :: Image Pixel8)
+    ImageYA16 img -> encodeRgba . from16to8 $ (promoteImage img :: Image PixelRGBA16)
+    ImageRGB16 img -> encodeRgb . from16to8 $ img
+    ImageRGBA16 img -> encodeRgba . from16to8 $ img
